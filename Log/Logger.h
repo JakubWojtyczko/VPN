@@ -28,45 +28,45 @@ class Logger {
 // }
 //
 private:
-	// Can't create an instance. Use getInstance()
+// Can't create an instance. Use getInstance()
     Logger() {}
-    
+
 public:
-	Logger(Logger const& logger) = delete;
+    Logger(Logger const& logger) = delete;
     virtual ~Logger();
-	// true if logger is active (in debug mode)
+    // true if logger is active (in debug mode)
     // false otherwise.
-	// Debug mode when DEBUG flag is defined
+    // Debug mode when DEBUG flag is defined
     operator bool() const;
-	// Return last reported error
+    // Return last reported error
     std::string const& getLastError() const;
-	// Return last reported info
+    // Return last reported info
     std::string const& getLastInfo() const;
 
-	// Return reference to info/error string depending
-	// on passed message type:
-	// logger[LoggerMessageType::ERROR] -> last_error_log
-	// logger[LoggerMessageType::INFO]  -> las_info_log
-	// Do not print a message
-	std::string & operator[](LoggerMessageType type);
-	
-	// Report and print an error
+    // Return reference to info/error string depending
+    // on passed message type:
+    // logger[LoggerMessageType::ERROR] -> last_error_log
+    // logger[LoggerMessageType::INFO]  -> las_info_log
+    // Do not print a message
+    std::string & operator[](LoggerMessageType type);
+
+    // Report and print an error
     void error(std::string const& error);
-	// Report and print an info
+    // Report and print an info
     void info(std::string const& info);
 
-	// Print error/info
+    // Print error/info
     void reportLog(LoggerMessageType type) const;
 
-	// Return an instance of logger
+    // Return an instance of logger
     static Logger & getInstance();
 
 private:
-	// last info
+    // last info
     std::string last_info_log;
-	// last error
+    // last error
     std::string last_error_log;
-	
+
 	// logger instance (singleton)
     static Logger logger;
 

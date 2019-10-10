@@ -7,7 +7,7 @@ namespace vpn {
 Logger Logger::logger;
 
 Logger::~Logger() {
-	
+
 }
 
 Logger::operator bool() const {
@@ -37,26 +37,26 @@ void Logger::info(std::string const& info) {
 }
 
 std::string & Logger::operator[](LoggerMessageType type) {
-	if (type == LoggerMessageType::INFO) {
-		return this -> last_info_log;
-	} else {
-		return this -> last_error_log;
-	}
+    if (type == LoggerMessageType::INFO) {
+        return this -> last_info_log;
+    } else {
+        return this -> last_error_log;
+    }
 }
 
 void Logger::reportLog(LoggerMessageType type) const {
     switch (type) {
         case ERROR:
-		std::cout << "ERROR: " << this -> last_error_log << '\n';
+        std::cout << "ERROR: " << this -> last_error_log << '\n';
         break;
-		case INFO:
-		std::cout << "INFO: " << this -> last_info_log << '\n';
+        case INFO:
+        std::cout << "INFO: " << this -> last_info_log << '\n';
         break;
     }
 }
 
 Logger & Logger::getInstance() {
-	return logger;
+    return logger;
 }
 
 } // namespace vpn
