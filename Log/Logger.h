@@ -42,7 +42,6 @@ public:
     std::string const& getLastError() const;
     // Return last reported info
     std::string const& getLastInfo() const;
-
     // Return reference to info/error string depending
     // on passed message type:
     // logger[LoggerMessageType::ERROR] -> last_error_log
@@ -67,7 +66,7 @@ private:
     // last error
     std::string last_error_log;
 
-	// logger instance (singleton)
+    // logger instance (singleton)
     static Logger logger;
 
 };

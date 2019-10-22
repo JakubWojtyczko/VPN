@@ -1,11 +1,10 @@
-#ifndef VPN_IP_TCP
-#define VPN_IP_TCP
+#ifndef VPN_IP_TCP_HEADER
+#define VPN_IP_TCP_HEADER
 
 #include <cstdint>
 
 namespace vpn {
 
-typedef unsigned __int128 uint128_t;
 
 struct TcpHeader {
     // octet 1
@@ -16,8 +15,9 @@ struct TcpHeader {
     // octet 3
     std::uint32_t ack_num;
     //octet 4
-    std::uint8_t off_rsv;
-    std::uint8_t flags; // URG, ACK, PSH, RST, SYN, FIN
+    // header len : 4, reserved (unused): 6,
+    // URG : 1, ACK : 1, PSH: 1, RST: 1, SYN: 1, FIN: 1
+    std::uint16_t hl_flags;
     std::uint16_t win_size;
     // octet 5
     std::uint16_t checksum;
@@ -31,4 +31,4 @@ struct TcpHeader {
 
 
 
-#endif  // VPN_IP_TCP
+#endif  // VPN_IP_TCP_HEADER
