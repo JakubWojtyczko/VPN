@@ -27,13 +27,17 @@ std::string const& Logger::getLastInfo() const  {
 }
 
 void Logger::error(std::string const& error) {
+#if defined(DEBUG) || defined(W_DEBUG)
     this -> last_error_log = error;
     static_cast<const Logger *>(this) -> reportLog(LoggerMessageType::ERROR);
+#endif // DEBUG || W_DEBUG
 }
 
 void Logger::info(std::string const& info) {
+#ifdef W_DEBUG
     this -> last_info_log = info;
     static_cast<const Logger *>(this) -> reportLog(LoggerMessageType::INFO);
+#endif // W_DEBUG
 }
 
 std::string & Logger::operator[](LoggerMessageType type) {

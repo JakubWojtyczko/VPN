@@ -2,12 +2,15 @@
 #define VPN_IP_TCP
 
 #include <cstdint>
-#include <map>
 #include <vector>
+#include <utilities>
 
 #include "TcpHeader.h"
 
 namespace vpn {
+
+const double TcpAckExpentanceTiimer {0.1};  // 100 ms
+const int TcpMaxRetransmissionNumber {5};
 
 const std::uint16_t TCP_URG {1 << 5};
 const std::uint16_t TCP_ACK {1 << 4};
@@ -40,7 +43,7 @@ public:
     // check if flags are set
     // data is urgent
     bool urg_bit(TcpHeader const& tcp_h) const;
-    // indicates if ack number is valid
+    // indicates if ack number is set
     bool ack_bit(TcpHeader const& tcp_h) const;
     // push the entire buffer immediately to receiver
     bool psh_bit(TcpHeader const& tcp_h) const;
@@ -50,21 +53,26 @@ public:
     bool syn_bit(TcpHeader const& tcp_h) const;
     // terminate TCP connection
     bool fin_bit(TcpHeader const& tcp_h) const;
-    
+
     // help in knowing from where the data begins
     unsigned header_len(TcpHeader const& tcp_h) const;
     
     // read TCP data from 'data_begin'
     // return amount of read data
     TcpHeader recieve_tcp(const std::uint32_t * bigin, const std::uint32_t * end, int id);
-
+    // check whether destination port is proper and crc
+    bool check_new_packet(TcpHeader const& head, std::vector<std::uint8_t> const& data);
 private:
     // our port
     std::uint16_t port;
 
-    // tcp[user_id][tcp_number]
-    std::map<int, std::vector<TcpHeader>> tcp_h_received;
-    std::map<int, std::vector<TcpHeader>> tcp_h_to_send;
+    // tcp[user_id][tcp_number] with data
+    std::vector<std::pair<TcpHeader, double>> tcp_h_received;
+    // sent TCP with data
+    std::vector<std::pair<TcpHeader, double>> tcp_h_sent;
+
+    std::vector<std::uint8_t> send_data_buffer;
+    std::vector<std::uint8_t> rec_data_buffer;
 
 };
 

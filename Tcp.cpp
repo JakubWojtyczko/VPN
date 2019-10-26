@@ -1,9 +1,13 @@
 #include "Tcp.h"
 #include <cstdlib>
+#include <ctime>
+
+#include "Logger.h"
+
 
 namespace vpn {
 
-
+using std::to_string;
 
 bool Tcp::check_port(TcpHeader const& tcp_h) const {
     return this -> port == tcp_h.destin_port;
@@ -95,7 +99,36 @@ int Tcp::receive_tcp(const std::uint32_t * begin, const std::uint32_t * end, int
     } else {
         // TODO: read options
     }
+    if(check_new_packet(head, data) == false) {
+        // release that packet
+        return 0;
+    }
     return 1;
 }
+
+bool Tcp::check_new_packet(TcpHeader const& head, std::vector<std::uint8_t> const& data) {
+    // check port 
+    if (head.destin_port != this -> port) {
+        Logger::getInstance().info("TCP: Wrong port. " + to_string(head.destin_port) + " received "
+            + " but " + to_string(port) + " was expected");
+        return false;
+    }
+    // check control sum
+    if (crc(head, data) == CRC_FAIL) {
+        Logger::getInstance().info("TCP: Incorrect Checksum: " + to_string(head.checksum));
+        return false;
+    }
+    return true;
+}
+
+bool Tcp::required_resopnse(TcpHeader const& head) {
+    if (ack_bit(head) && !syn_bit(head)) {
+        return false;
+    }
+    return true;
+}
+
+bool Tcp::prepare_header(std::uint32_t data len, std::uint32_t last_seq_num,
+    std::uint32_t last_ack_num)
 
 } // namespace vpn
