@@ -129,6 +129,8 @@ bool Tcp::required_resopnse(TcpHeader const& head) {
 }
 
 bool Tcp::prepare_header(std::uint32_t data len, std::uint32_t last_seq_num,
-    std::uint32_t last_ack_num)
+    std::uint32_t last_ack_num) {
+        
+}
 
 } // namespace vpn
