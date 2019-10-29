@@ -2,7 +2,7 @@
 #define VPN_AUTENTICATION
 
 #include <cstdint>
-
+#include <vector>
 
 namespace vpn {
 
@@ -15,7 +15,8 @@ struct AuthenticationHeader {
     std::uint32_t spi; // security parameter index
     // octet 3
     std::uint32_t seq_num;
-    /* authentication data here*/
+    // authentication data
+    std::vector <std::uint32_t> auth_data;
 };
 
 

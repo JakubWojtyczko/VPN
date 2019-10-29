@@ -20,12 +20,9 @@ class Logger {
 // to receive last info/error message.
 //
 // Usage:
-// #include "Logger.h"
-//
-// Logger & logger_instance = Logger::getInstance();
-// if (logger) {
-//     logger.error("An error occurred");
-// }
+// 1. #include "Logger.h"
+// 2.
+// 3. Logger::getInstance().error("An error occurred");
 //
 private:
 // Can't create an instance. Use getInstance()

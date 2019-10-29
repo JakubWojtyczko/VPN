@@ -1,5 +1,5 @@
 #include "Tcp.h"
-#include <cstdlib>
+#include <cstring>
 #include <ctime>
 
 #include "Logger.h"
@@ -21,16 +21,16 @@ std::uint8_t Tcp::calcualte_checksum(std::vector<std::uint8_t> const& data) cons
     while (sum > 511) { // 511 = 2^9 - 1
         sum = (sum & 511) + (sum >> 8);
     }
-    return std::uint8_t(sum));
+    return std::uint8_t(sum);
 }
 
-bool Tcp::crc(TcpHeader const& tcp_h, std::vector<std::uint8_t> const& data) const {
+Crc Tcp::crc(TcpHeader const& tcp_h, std::vector<std::uint8_t> const& data) const {
     std::uint8_t seg_sum = this -> calcualte_checksum(data);
-    std::uint8_t sum = ~(seg_sum + std::uint8_t(tcp_h.checksum))
+    std::uint8_t sum = ~(seg_sum + std::uint8_t(tcp_h.checksum));
     if (sum == 0) {
-        return CRC_PASS;
+        return Crc::PASS;
     } else {
-        return CRC_FAIL;
+        return Crc::FAIL;
     }
 }
 
@@ -62,17 +62,17 @@ bool Tcp::fin_bit(TcpHeader const& tcp_h) const {
     return tcp_h.hl_flags & TCP_FIN;
 }
 
-unsigned header_len(TcpHeader const& tcp_h) const {
+unsigned Tcp::header_len(TcpHeader const& tcp_h) const {
     // tcp_h.hl_flags = 0110 1010 1101 1101
     // header length    ^^^^
     std::uint16_t offset = 3 * 4;
-    std::uint16_t header_len_mask = 15 << offset;
+    std::uint16_t header_len_mask = 15 << offset; // b'1111' = 2^4 - 1
     return (tcp_h.hl_flags & header_len_mask) >> offset;
 } 
 
-int Tcp::receive_tcp(const std::uint32_t * begin, const std::uint32_t * end, int id) {
-    TcpHeader head;
-    std::memset(head, 0, sizeof(head));
+int Tcp::recieve_tcp(const std::uint32_t * begin, const std::uint32_t * end) {
+    TcpHeader header;
+    std::memset(&header, 0, sizeof(header));
     header.source_port = std::uint16_t(*begin >> 8);
     header.destin_port = std::uint16_t(*begin);
     begin++;
@@ -88,8 +88,8 @@ int Tcp::receive_tcp(const std::uint32_t * begin, const std::uint32_t * end, int
     header.urgent_p = *begin;
     begin++;
     std::vector<std::uint8_t> data;
-    if (header_len(head) == 20) {
-        // there are no options
+    if (header_len(header) == 20) {
+        // there are no options applied
         for ( ; begin != end; begin++) {
             data.push_back(std::uint8_t(*begin >> 24));
             data.push_back(std::uint8_t(*begin >> 16));
@@ -99,7 +99,7 @@ int Tcp::receive_tcp(const std::uint32_t * begin, const std::uint32_t * end, int
     } else {
         // TODO: read options
     }
-    if(check_new_packet(head, data) == false) {
+    if(check_new_packet(header, data) == false) {
         // release that packet
         return 0;
     }
@@ -114,21 +114,21 @@ bool Tcp::check_new_packet(TcpHeader const& head, std::vector<std::uint8_t> cons
         return false;
     }
     // check control sum
-    if (crc(head, data) == CRC_FAIL) {
+    if (crc(head, data) == Crc::FAIL) {
         Logger::getInstance().info("TCP: Incorrect Checksum: " + to_string(head.checksum));
         return false;
     }
     return true;
 }
 
-bool Tcp::required_resopnse(TcpHeader const& head) {
+bool Tcp::required_resopnse(TcpHeader const& head) const {
     if (ack_bit(head) && !syn_bit(head)) {
         return false;
     }
     return true;
 }
 
-bool Tcp::prepare_header(std::uint32_t data len, std::uint32_t last_seq_num,
+bool Tcp::prepare_header(std::uint32_t len, std::uint32_t last_seq_num,
     std::uint32_t last_ack_num) {
         
 }
