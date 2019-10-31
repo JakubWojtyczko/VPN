@@ -1,11 +1,12 @@
-#include "DH.h"
+#include "Isakmp.h"
 
 #include <cstdlib>
 
 
 namespace vpn {
 
-void DH::prepare_common_fields_for_message_1_2(Message1_2 & msg, std::uint32_t const& ip_addr) const {
+
+void Isakmp::prepare_security_context(Message1_2 & msg) const {
     // SecurityAssociation
     msg.sec_assoc.next_payload = 4; // Key Exchange 
     msg.sec_assoc.reserved = 0;
@@ -63,16 +64,16 @@ void DH::prepare_common_fields_for_message_1_2(Message1_2 & msg, std::uint32_t c
     msg.id.id_type = 1; // IPV4_ADDR;
     msg.id.protocol = 17; // UDP
     msg.id.port = 0; // Unused
-    msg.id.data = ip_addr; // ip
+    msg.id.data = this -> ip; // ip
 }
 
 
-IsakmpHeader DH::prepare_header_for_message1() const {
+IsakmpHeader Isakmp::prepare_header_for_message1() const {
     IsakmpHeader head;
     // initiator spi is a random number
-    head.init_spi = std::rand();
+    head.init_spi = this -> source_spi;
     // responder spi must be 0 for msg1
-    head.resp_spi = 0u;
+    head.resp_spi = 0;
     // first payload - security association (1)
     head.next_payload = 1;
     // verision 1.0 (0001 0000)
@@ -88,19 +89,22 @@ IsakmpHeader DH::prepare_header_for_message1() const {
 }
 
 
-Message1_2 DH::prepare_message_1(std::uint32_t const& ip_addr) const {
+Message1_2 Isakmp::prepare_message_1() const {
     Message1_2 msg;
     msg.head = prepare_header_for_message1();
-    prepare_common_fields_for_message_1_2(msg, ip_addr);
+    prepare_security_context(msg);
 }
 
+bool Isakmp::verify_message_1(Message1_2 const& msg) {
 
-IsakmpHeader DH::prepare_header_for_message2(IsakmpHeader const& head1) const {
+}
+
+IsakmpHeader Isakmp::prepare_header_for_message2() const {
     IsakmpHeader head;
     // initiator spi is copied from received header
-    head.init_spi = head1.init_spi;
+    head.init_spi = this -> dest_spi;
     // responder spi is a random number in msg2
-    head.resp_spi = (std::uint32_t) rand();
+    head.resp_spi = this -> source_spi;
     // first payload - security association (1)
     head.next_payload = 1;
     // verision 1.0 (0001 0000)
@@ -115,14 +119,37 @@ IsakmpHeader DH::prepare_header_for_message2(IsakmpHeader const& head1) const {
     return head;
 }
 
-Message1_2 DH::prepare_message_2(IsakmpHeader const& header1, std::uint32_t const& ip_addr) const {
+Message1_2 Isakmp::prepare_message_2() const {
     Message1_2 msg;
-    msg.head = prepare_header_for_message2(header1);
-    prepare_common_fields_for_message_1_2(msg, ip_addr);
+    msg.head = prepare_header_for_message2();
+    prepare_security_context(msg);
 }
 
 
-void DH::prepare_key(std::uint8_t key[128], std::string const& key_hex) const {
+IsakmpHeader Isakmp::prepare_header_for_message3() const {
+    IsakmpHeader head;
+    // initiator spi is copied from received header
+    head.init_spi = this -> source_spi;
+    // responder spi is copied
+    head.resp_spi = this -> dest_spi;
+    // first payload - security association (1)
+    head.next_payload = 8; // hash 
+    // verision 1.0 (0001 0000)
+    head.exchange_type = 1 << 4;
+    // exchange type - Aggresive mode (4)
+    head.exchange_type = 4;
+    // no flags for msg1
+    head.flags = 0;
+    // Message ID = 0
+    head.message_id = 0;
+    // Important: length field is incomplete
+    // We have to add the size of hashed data!
+    head.length = sizeof(IsakmpHeader);
+    return head;
+}
+
+
+void Isakmp::prepare_key(std::uint8_t key[128], std::string const& key_hex) const {
 
 }
 

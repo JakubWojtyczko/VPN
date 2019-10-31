@@ -1,116 +1,60 @@
 #ifndef VPN_ISAKMP
 #define VPN_ISAKMP
 
-#include <cinttypes>
+#include "IsakmpHeader.h"
 
-struct IsakmpHeader {
+#include <string>
+#include <vector>
+#include <cstdlib>
 
-    std::uint32_t init_spi;
-    std::uint32_t resp_spi;
+namespace vpn {
+// Security association:
+// source                      destination
+//   ---------------msg1--------->
+//      source public key, negotiation
+//   <--------------msg2----------
+//      destin public key, negotiation
+//   ---------------msg3---------> (encrypted content)
+//      first data, controll
+class Isakmp {
 
-    std::uint8_t next_payload;
-    std::uint8_t version;
-    std::uint8_t exchange_type;
-    std::uint8_t flags;
+public:
+    // for responder ip - its own ip, for initiator ip=0
+    Isakmp(std::uint32_t const& ip_address) : ip(ip_address), source_spi(std::rand() / 2 + 100) {}
     
-    std::uint32_t message_id;
-    std::uint32_t length;
-};
+    void prepare_security_context(Message1_2 & msg) const;
 
-struct Message1_2 {
+    IsakmpHeader prepare_header_for_message1() const;
+    Message1_2 prepare_message_1() const;
+    bool verify_message_1(Message1_2 const& msg1);
 
-    // Header
-    IsakmpHeader head;
+    IsakmpHeader prepare_header_for_message2() const;
+    Message1_2 prepare_message_2() const;
+    bool verify_message_2(Message1_2 const& msg2) const;
 
-    // payload 1: Security association
-    struct SecurityAssociation {
-        std::uint8_t next_payload;
-        std::uint8_t reserved;
-        std::uint16_t length;
-        std::uint16_t domian_of_interpretation;
-        std::uint32_t situation;
-        struct Proposal {
-            std::uint8_t next_payload;
-            std::uint8_t reserved;
-            std::uint16_t length;
-            std::uint8_t prop_num;
-            std::uint8_t proto_id;
-            std::uint8_t spi_size;
-            std::uint8_t transforms;
+    IsakmpHeader prepare_header_for_message3() const;
+    std::vector<std::uint8_t> prepare_content_message_3() const;
+    bool verify_message_3(IsakmpHeader const& head, std::vector<std::uint8_t> const& content) const;
 
-            struct Transform {
-                std::uint8_t next;
-                std::uint8_t reserved;
-                std::uint16_t length;
-                std::uint8_t num;
-                std::uint8_t id;
-                std::uint16_t reserved_2; 
-                // Encryption algorithm
-                struct EA {
-                    std::uint16_t format;
-                    std::uint16_t value;
-                } enc_alg;
+protected:
+    void prepare_key(std::uint8_t key[128], std::string const& key_hex) const;
 
-                // Key Length
-                struct KL {
-                    std::uint16_t format;
-                    std::uint16_t value;
-                } key_len;
+private:
+    std::string our_public_key_hex;
+    std::string rec_public_key_hex;
 
-                // Hash algorithm
-                struct HA {
-                    std::uint16_t format;
-                    std::uint16_t value;
-                } hash_alg;
+    std::string our_private_key_hex;
+    // our secret value for decoding/encoding messages over IPSec
+    std::string secret_hex;
+    // Responder IPv4 address
+    std::uint32_t ip;
 
-                // Group description
-                struct GD {
-                    std::uint16_t format;
-                    std::uint16_t value;
-                } gr_desc;
-
-                // Authentication Mode
-                struct AM {
-                    std::uint16_t format;
-                    std::uint16_t value;
-                } auth_mod;
-
-                // Life type
-                struct LT {
-                    std::uint16_t format;
-                    std::uint16_t value;
-                } lif_ty;
-
-                // Life duration
-                struct LD {
-                    std::uint16_t format;
-                    std::uint16_t length;
-                    std::uint32_t value;
-                } lif_du;
-            } tran;
-        } proposal;
-    } sec_assoc;
-
-    // payload 2: Key Exchange
-    struct KeyExchange {
-        std::uint8_t next;
-        std::uint8_t reserved;
-        std::uint16_t length;
-        std::uint8_t data[128];
-    } key;
-
-    // payload 3: identification
-    struct Identification {
-        std::uint8_t next;
-        std::uint8_t reserved;
-        std::uint_fast16_t length;
-        std::uint8_t id_type;
-        std::uint8_t protocol;
-        std::uint16_t port;
-        std::uint32_t data; // ip
-    } id;
-
+    std::uint32_t source_spi;
+    std::uint32_t dest_spi;
 
 };
+
+} // namespace vpn
+ 
 
 #endif // VPN_ISAKMP
