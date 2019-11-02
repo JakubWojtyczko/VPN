@@ -8,13 +8,33 @@
 #include <cstdlib>
 
 namespace vpn {
+
+enum IsakmpStatus {
+    SUCCESS,
+    INVALID_PAYLOAD_TYPE,
+    DOI_NOT_SUPPORTED,
+    SITUATION_NOT_SUPPOETED,
+    INVALID_MAJ_VER = 5,
+    INVALID_MIN_VER,
+    INVALID_EXCHANGE_TYPE,
+    INVALID_FLAGS,
+    INVALID_MESSAGE_ID,
+    INVALID_PROTOCOL_ID,
+    INVALID_SPI,
+    INVALID_TRANSFORM_ID,
+    ATTRIBUTES_NOT_SUPPORTED,
+    CONNECTED = 16384
+};
+
+const std::uint32_t CertificateMaxDuration {0x4F1A00}; // 24H (in seconds)
+
 // Security association:
 // source                      destination
-//   ---------------msg1--------->
+//   --------------- msg 1 --------->
 //      source public key, negotiation
-//   <--------------msg2----------
+//   <-------------- msg 2 ----------
 //      destin public key, negotiation
-//   ---------------msg3---------> (encrypted content)
+//   --------------- msg 3 ---------> (encrypted content)
 //      first data, controll
 class Isakmp {
 
@@ -26,11 +46,11 @@ public:
 
     IsakmpHeader prepare_header_for_message1() const;
     Message1_2 prepare_message_1() const;
-    bool verify_message_1(Message1_2 const& msg1);
+    IsakmpStatus verify_message_1(Message1_2 const& msg1);
 
     IsakmpHeader prepare_header_for_message2() const;
     Message1_2 prepare_message_2() const;
-    bool verify_message_2(Message1_2 const& msg2) const;
+    IsakmpStatus verify_message_2(Message1_2 const& msg2);
 
     IsakmpHeader prepare_header_for_message3() const;
     std::vector<std::uint8_t> prepare_content_message_3() const;
@@ -49,9 +69,11 @@ private:
     // Responder IPv4 address
     std::uint32_t ip;
 
-    std::uint32_t source_spi;
-    std::uint32_t dest_spi;
+    std::uint64_t source_spi;
+    std::uint64_t dest_spi;
+    std::uint32_t mess_id;
 
+    std::uint32_t certificate_expiration;
 };
 
 } // namespace vpn

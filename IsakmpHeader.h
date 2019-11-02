@@ -3,9 +3,8 @@
 
 #include <cinttypes>
 
-#define pack __attribute__((__packed__))
 
-struct pack IsakmpHeader {
+struct __attribute__((__packed__)) IsakmpHeader {
 
     std::uint64_t init_spi;
     std::uint64_t resp_spi;
@@ -19,19 +18,19 @@ struct pack IsakmpHeader {
     std::uint32_t length;
 };
 
-struct pack Message1_2 {
+struct __attribute__((__packed__)) Message1_2 {
 
     // Header
     IsakmpHeader head;
 
     // payload 1: Security association
-    struct pack SecurityAssociation {
+    struct __attribute__((__packed__)) SecurityAssociation {
         std::uint8_t next_payload;
         std::uint8_t reserved;
         std::uint16_t length;
         std::uint16_t domian_of_interpretation;
         std::uint32_t situation;
-        struct pack Proposal {
+        struct Proposal {
             std::uint8_t next_payload;
             std::uint8_t reserved;
             std::uint16_t length;
@@ -40,7 +39,7 @@ struct pack Message1_2 {
             std::uint8_t spi_size;
             std::uint8_t transforms;
 
-            struct pack Transform {
+            struct Transform {
                 std::uint8_t next;
                 std::uint8_t reserved;
                 std::uint16_t length;
@@ -48,43 +47,43 @@ struct pack Message1_2 {
                 std::uint8_t id;
                 std::uint16_t reserved_2; 
                 // Encryption algorithm
-                struct pack EA {
+                struct EA {
                     std::uint16_t format;
                     std::uint16_t value;
                 } enc_alg;
 
                 // Key Length
-                struct pack KL {
+                struct KL {
                     std::uint16_t format;
                     std::uint16_t value;
                 } key_len;
 
                 // Hash algorithm
-                struct pack HA {
+                struct HA {
                     std::uint16_t format;
                     std::uint16_t value;
                 } hash_alg;
 
                 // Group description
-                struct pack GD {
+                struct GD {
                     std::uint16_t format;
                     std::uint16_t value;
                 } gr_desc;
 
                 // Authentication Mode
-                struct pack AM {
+                struct AM {
                     std::uint16_t format;
                     std::uint16_t value;
                 } auth_mod;
 
                 // Life type
-                struct pack LT {
+                struct LT {
                     std::uint16_t format;
                     std::uint16_t value;
                 } lif_ty;
 
                 // Life duration
-                struct pack LD {
+                struct LD {
                     std::uint16_t format;
                     std::uint16_t length;
                     std::uint32_t value;
@@ -94,7 +93,7 @@ struct pack Message1_2 {
     } sec_assoc;
 
     // payload 2: Key Exchange
-    struct pack KeyExchange {
+    struct KeyExchange {
         std::uint8_t next;
         std::uint8_t reserved;
         std::uint16_t length;
@@ -102,7 +101,7 @@ struct pack Message1_2 {
     } key;
 
     // payload 3: identification
-    struct pack Identification {
+    struct Identification {
         std::uint8_t next;
         std::uint8_t reserved;
         std::uint16_t length;
