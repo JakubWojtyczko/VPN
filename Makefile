@@ -57,10 +57,9 @@ $(OBJ_COMMON): $(SRC_COMMON)
 
 $(OBJ_SERVER): $(SRC_SERVER)
 	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
-    
+
 $(OBJ_CLIENT): $(SRC_CLIENT)
 	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
-
 
 
 clean:

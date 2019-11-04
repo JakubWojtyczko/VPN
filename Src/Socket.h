@@ -2,13 +2,12 @@
 #define VPN_SOCKET
 
 #ifdef _WIN32 // Windows
-  //#ifndef _WIN32_WINNT
-  //    #define _WIN32_WINNT 0x0501 // Windows XP
-  //#endif // _WIN32_WINNT
+  #ifndef _WIN32_WINNT
+      #define _WIN32_WINNT 0x0501 // Windows XP
+  #endif // _WIN32_WINNT
   #include <winsock2.h>
   #include <Ws2tcpip.h>
 #else  // Assume POSIX
-  
   #include <sys/socket.h>
   #include <arpa/inet.h>
   #include <netdb.h>
@@ -16,11 +15,17 @@
 #endif // _WIN32
 
 namespace vpn {
-    
+
+enum SockTransport{
+    UDP,
+    TCP
+};
 
 class Socket {
 
 public:
+    Socket(std::string const& ip, int port, SockTransport t);
+    virtual ~Socket();
     // WinSocket requires that
     int sock_init() const;
     // WinSocket requires that
@@ -34,6 +39,9 @@ private:
     // for that and special INVALID_SOCKET for 
     // invalid sockets.
     int socket_fd;
+    std::string ip_address;
+    int port;
+    SockTransport transport;
 };
 
 } // namespace vpn
