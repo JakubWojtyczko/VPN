@@ -33,19 +33,20 @@ class IPCommon {
                 }
             case V6:
         }*/
+        return 0;
     }
 
-    static std::uint16_t header_checksum(const std::uint16_t * head_begin, const std::uint16_t * head_end) {/*
+    static std::uint16_t header_checksum(const std::uint16_t * head_begin, const std::uint16_t * head_end) {
         unsigned long sum = 0;
         for ( ; head_begin != head_end; ++head_begin) {
             sum += *head_begin;
         
             while (sum > std::pow(2, 16) - 1) { // 511 = 2^9 - 1
-                sum = (sum & (std::pow(2, 16) - 1)) + (sum >> 16);
+                //sum = (sum & (std::pow(2, 16) - 1)) + (sum >> 16);
             }
         }
         return std::uint16_t(sum);
-    */}
+    }
     
 };
 

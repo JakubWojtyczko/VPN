@@ -36,6 +36,7 @@ Crc Tcp::crc(TcpHeader const& tcp_h, std::vector<std::uint8_t> const& data) cons
 
 std::uint32_t Tcp::ack_number(TcpHeader const& tcp_h) const {
     std::uint32_t new_ack_num = tcp_h.seq_num + 1;
+    return new_ack_num;
 }
 
 bool Tcp::urg_bit(TcpHeader const& tcp_h) const {
@@ -130,7 +131,8 @@ bool Tcp::required_resopnse(TcpHeader const& head) const {
 
 bool Tcp::prepare_header(std::uint32_t len, std::uint32_t last_seq_num,
     std::uint32_t last_ack_num) {
-        
+
+    return false; 
 }
 
 } // namespace vpn
