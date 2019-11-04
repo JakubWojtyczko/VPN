@@ -13,7 +13,7 @@ bool validateCredentials(const char * data, Creds type) {
     switch (type) {
         case USERNAME:
         case PASSOWORD:
-        if (std::isalnum(data)) {
+        if (0){//std::isalnum(data)) {
             return false;
         }
         break;

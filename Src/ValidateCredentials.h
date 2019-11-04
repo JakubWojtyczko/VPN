@@ -10,7 +10,7 @@ enum Creds {
     USERNAME,
     PASSOWORD,
     RESPONSE
-}
+};
 
 bool validateCredentials(const char * data, Creds type);
 

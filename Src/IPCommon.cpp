@@ -19,7 +19,7 @@ template <IPVersion IPVer>
 class IPCommon {
     
     static std::uint32_t addr_from_string(std::string const& address) {
-        std::uint32_t ret = 0;
+       /* std::uint32_t ret = 0;
         std::string dot = ".";
         switch (IPVer) {
             case V4:
@@ -32,10 +32,10 @@ class IPCommon {
                     s.erase(0, pos + delimiter.length());
                 }
             case V6:
-        }
+        }*/
     }
 
-    static std::uint16_t header_checksum(const std::uint16_t * head_begin, const std::uint16_t * head_end) {
+    static std::uint16_t header_checksum(const std::uint16_t * head_begin, const std::uint16_t * head_end) {/*
         unsigned long sum = 0;
         for ( ; head_begin != head_end; ++head_begin) {
             sum += *head_begin;
@@ -45,7 +45,7 @@ class IPCommon {
             }
         }
         return std::uint16_t(sum);
-    }
+    */}
     
 };
 
