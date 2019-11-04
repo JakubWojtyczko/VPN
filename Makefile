@@ -4,8 +4,10 @@ CLIENT=Client
 SERVER=Server
 
 SOURCE_DIR=Src
-CPPFLAGS=-g -Wall
+CPPFLAGS=-g -Wall -DW_DBUG
 
+TARGETS=server client
+TARGETS_WIN_EXT=server.exe client.exe
 
 SRC_COMMON = $(wildcard $(SOURCE_DIR)/*.cpp)
 OBJ = $(patsubst %.cpp,%.o,$(SRC_COMMON))
@@ -19,17 +21,22 @@ SRC_CLIENT = $(wildcard $(SOURCE_DIR)/$(CLIENT)/*.cpp)
 OBJ_C = $(patsubst %.cpp,%.o,$(SRC_CLIENT))
 OBJ_CLIENT = $(subst Src/,Out/,$(OBJ_C))
 
-all: dir server client
+
+all: dir $(TARGETS)
 
 
 dir: | $(OBJ_DIR)
 
 
 $(OBJ_DIR):
-	@echo "Creating object dirs"
+ifeq ($(OS),Windows_NT)
 	@mkdir $@
-	@mkdir $@/$(CLIENT)
-	@mkdir $@/$(SERVER)
+	@mkdir $@\$(CLIENT)
+	@mkdir $@\$(SERVER)
+else
+	@mkdir -p $@/$(CLIENT)
+    @mkdir -p $@/$(SERVER)
+endif
 
 
 server: $(OBJ_COMMON) $(OBJ_SERVER)
@@ -48,7 +55,11 @@ $(OBJ_CLIENT): $(SRC_CLIENT)
 	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
 
 clean:
-	@rm -fr Out
-	@rm client server
+ifeq ($(OS),Windows_NT)
+	@rmdir /S /Q $(OBJ_DIR)
+	@del /Q $(TARGETS_WIN_EXT)
+else
+	@rm -fr $(TARGETS) $(OBJ_DIR)
+endif
 
 .PHONY: all dir clean
