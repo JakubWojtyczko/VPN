@@ -2,6 +2,7 @@
 #define VPN_SOCKET
 
 #include <string>
+#include <vector>
 
 
 namespace vpn {
@@ -20,6 +21,11 @@ public:
     int last_error() const;
     std::string last_error_str() const;
 
+    bool send_msg(std::vector<char> const& v, int flags=0) const;
+    bool recv_msg(std::vector<char> & v, int flags=0) const;
+
+    bool check_result(int res) const;
+    
     void close_socket();
 protected:
     // WinSocket requires that

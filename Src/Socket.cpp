@@ -18,6 +18,8 @@
 
 #include <string.h>
 
+#include "Logger.h"
+
 namespace vpn {
 
 
@@ -64,6 +66,36 @@ std::string Socket::last_error_str() const {
 #endif // _WIN32
 }
 
+bool Socket::send_msg(std::vector<char> const& v, int flags) const {
+    int res = send(this -> fd, v.data(), v.size(), flags);
+    if (check_result(res) == false) {
+        Logger::getInstance().error("Socket::send_msg: " + last_error_str());
+        return false;
+    }
+    return true;
+}
+
+
+bool Socket::recv_msg(std::vector<char> & v, int flags) const {
+    char buff[1000];
+    int res = recv(this -> fd, buff, sizeof(buff), flags);
+    if (check_result(res) == false) {
+        Logger::getInstance().error("Socket::send_msg: " + last_error_str());
+        return false;
+    }
+    v.clear();
+    v.insert(v.begin(), buff, buff + res);
+    return true;
+}
+
+
+bool Socket::check_result(int result) const {
+#ifdef _WIN32
+    return result != SOCKET_ERROR;
+#else
+    return result >= 0;
+#endif // _WIN32  
+}
 
 void Socket::close_socket() {
 #ifdef _WIN32

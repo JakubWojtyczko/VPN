@@ -6,8 +6,8 @@
 namespace vpn {
 
 enum LoggerMessageType {
-    INFO,
-    ERROR
+    INFO_T,
+    ERROR_T
 };
 
 
