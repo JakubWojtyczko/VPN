@@ -16,7 +16,7 @@ bool ClientIsakmp::connect_to_server() {
     // set timout 100 [ms] 
     cli_sock.set_timeot(0, 10000); // 0 sec, 10000 usec
 
-    // Sending message 1 (initial) to the server
+    // Send message 1 (initial) to the server
     Logger::getInstance().info("ClientIsakmp: sending msg1");
 
     Message1_2 msg1 = isakmp.prepare_message_1();
@@ -31,6 +31,21 @@ bool ClientIsakmp::connect_to_server() {
     Message1_2 msg2;
     if (!cli_sock.recv_from(&msg2, sizeof(msg2), 0, SERVER_IP, 500)) {
         Logger::getInstance().error("Timeout while waiting for msg2: " + cli_sock.last_error_str());
+        return false;
+    }
+
+    Logger::getInstance().info("ClientIsakmp: Msg2 received. Veryfing...");
+    if (isakmp.verify_message_2(msg2) != SUCCESS) {
+        Logger::getInstance().error("ClientIsakmp: Msg2 verification failed");
+        return false;
+    }
+    
+    // send msg 3
+    Logger::getInstance().info("ClientIsakmp: sending msg3");
+
+    std::vector<std::uint8_t> msg3 = isakmp.prepare_message_3();
+    if (!cli_sock.send_to(msg3.data(), msg3.size(), 0, SERVER_IP, 500)) {
+        Logger::getInstance().error("Client Isakmp: cannot send msg3: " + cli_sock.last_error_str());
         return false;
     }
 

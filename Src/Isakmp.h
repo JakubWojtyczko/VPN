@@ -53,7 +53,7 @@ public:
     IsakmpStatus verify_message_2(Message1_2 const& msg2);
 
     IsakmpHeader prepare_header_for_message3() const;
-    std::vector<std::uint8_t> prepare_content_message_3() const;
+    std::vector<std::uint8_t> prepare_message_3() const;
     bool verify_message_3(IsakmpHeader const& head, std::vector<std::uint8_t> const& content) const;
 
 protected:

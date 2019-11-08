@@ -2,6 +2,7 @@
 #include "Logger.h"
 
 #include <cstdlib>
+#include <cstring>
 
 namespace vpn {
 
@@ -220,6 +221,18 @@ IsakmpHeader Isakmp::prepare_header_for_message3() const {
     // We have to add the size of hashed data!
     head.length = sizeof(IsakmpHeader);
     return head;
+}
+
+
+std::vector<std::uint8_t> Isakmp::prepare_message_3() const {
+    IsakmpHeader head = prepare_header_for_message3();
+    const int header_len = sizeof(head);
+    std::uint8_t head_memory[header_len] = {0};
+    std::memcpy(head_memory, &head, header_len);
+    std::vector<std::uint8_t> msg3(head_memory, head_memory + header_len);
+    // Add encrypted msg3 content 
+    // TODO !
+    return msg3;
 }
 
 IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
