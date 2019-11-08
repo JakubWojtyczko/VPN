@@ -15,14 +15,22 @@ enum SockTransport{
 class Socket {
 
 public:
-    Socket(std::string const& ip, int port, SockTransport t);
-    virtual ~Socket();
+    Socket(std::string const& ip, int port, SockTransport t) :
+        fd(-1), ip_address(ip), port(port), transport(t) {}
+    virtual ~Socket() {}
     
     int last_error() const;
     std::string last_error_str() const;
 
+    bool create_socket();
+    bool bind_socket() const;
+    bool set_timeot(int sec, int usec) const;
+
     bool send_msg(std::vector<char> const& v, int flags=0) const;
+    bool send_to(const void * buff, size_t len, int flags, const char * addr, int port) const;
+
     bool recv_msg(std::vector<char> & v, int flags=0) const;
+    bool recv_from(const void * buff, size_t len, int flags, const char * addr, int port) const;
 
     bool check_result(int res) const;
     

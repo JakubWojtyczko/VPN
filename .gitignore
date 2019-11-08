@@ -4,3 +4,6 @@
 
 # execute files
 *.exe
+
+# cashe
+.vscode/

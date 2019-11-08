@@ -3,8 +3,8 @@
 
 #include <cinttypes>
 
-
-struct __attribute__((__packed__)) IsakmpHeader {
+#pragma pack(push, 1)
+struct IsakmpHeader {
 
     std::uint64_t init_spi;
     std::uint64_t resp_spi;
@@ -17,14 +17,18 @@ struct __attribute__((__packed__)) IsakmpHeader {
     std::uint32_t message_id;
     std::uint32_t length;
 };
+#pragma pack(pop)
 
-struct __attribute__((__packed__)) Message1_2 {
+
+#pragma pack(push, 1)
+struct Message1_2 {
 
     // Header
     IsakmpHeader head;
 
     // payload 1: Security association
-    struct __attribute__((__packed__)) SecurityAssociation {
+    #pragma pack(push, 2)
+    struct SecurityAssociation {
         std::uint8_t next_payload;
         std::uint8_t reserved;
         std::uint16_t length;
@@ -91,6 +95,7 @@ struct __attribute__((__packed__)) Message1_2 {
             } tran;
         } proposal;
     } sec_assoc;
+    #pragma pack(pop)
 
     // payload 2: Key Exchange
     struct KeyExchange {
@@ -111,7 +116,8 @@ struct __attribute__((__packed__)) Message1_2 {
         std::uint32_t data; // ip
     } id;
 };
+#pragma pack(pop)
 
-#undef pack
+
 
 #endif // VPN_ISAKMP_HEADER
