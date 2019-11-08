@@ -6,16 +6,26 @@ namespace vpn {
 
 const char * SERVER_IP = "127.0.12.1"; // TODO can't be hardcoded
 
-
 bool ClientIsakmp::connect_to_server() {
+    // create socket, bind address and port
     if (!prepare_connection_for_isakmp()) {
         Logger::getInstance().error("ClientIsakmp: cannot prepare connetion");
         return false;
     }
-
     // set timout 100 [ms] 
     cli_sock.set_timeot(0, 10000); // 0 sec, 10000 usec
 
+    if (!handshake()) {
+        Logger::getInstance().error("Handshake failed  " + cli_sock.last_error_str());
+        cli_sock.close_socket();
+        return false;
+    }
+    return true;
+}
+
+
+bool ClientIsakmp::handshake() {
+    
     // Send message 1 (initial) to the server
     Logger::getInstance().info("ClientIsakmp: sending msg1");
 
@@ -24,6 +34,8 @@ bool ClientIsakmp::connect_to_server() {
         Logger::getInstance().error("Client Isakmp: cannot send msg1: " + cli_sock.last_error_str());
         return false;
     }
+    // set our new state - we are waiting fot connction
+    user.update_state(UserConnectionState::PANDING);
 
     // Receive message 2 (response) from the server
     Logger::getInstance().info("ClientIsakmp: waiting for msg2");
@@ -40,7 +52,10 @@ bool ClientIsakmp::connect_to_server() {
         return false;
     }
     
-    // send msg 3
+    // update state - establishment
+    user.update_state(UserConnectionState::ESTABLISHMENT);
+
+    // send message 3
     Logger::getInstance().info("ClientIsakmp: sending msg3");
 
     std::vector<std::uint8_t> msg3 = isakmp.prepare_message_3();
@@ -48,6 +63,9 @@ bool ClientIsakmp::connect_to_server() {
         Logger::getInstance().error("Client Isakmp: cannot send msg3: " + cli_sock.last_error_str());
         return false;
     }
+
+    // update state - connected (able to send a data now)
+    user.update_state(UserConnectionState::ESTABLISHED);
 
     return true;
 }
@@ -60,6 +78,7 @@ bool ClientIsakmp::prepare_connection_for_isakmp() {
     }
     Logger::getInstance().info("ClientIsakmp: binding socket");
     if (!cli_sock.bind_socket()) {
+        cli_sock.close_socket();
         return false;
     }
     return true;

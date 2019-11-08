@@ -4,17 +4,17 @@
 namespace vpn {
 
 enum UserConnectionState {
-    Disconnected,
-    Panding, // received msg 1
-    Establisment, // waiting for msg3
-    Connected
+    DISCONNECTED,
+    PANDING, // received msg 1
+    ESTABLISHMENT, // waiting for msg3
+    ESTABLISHED
 };
 
 
 class Usr {
 
 public:
-    Usr() : state(Disconnected) {}
+    Usr() : state(UserConnectionState::DISCONNECTED) {}
     virtual ~Usr() {}
 
     void update_state(UserConnectionState new_state);

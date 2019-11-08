@@ -23,12 +23,13 @@ public:
         cli_sock("127.0.0.1", 500, SockTransport::UDP),
         isakmp(0)  {}
     virtual ~ClientIsakmp() {}
-
+    
     bool connect_to_server();
 
 protected:
 
     bool prepare_connection_for_isakmp();
+    bool handshake();
 
 private:
     Usr & user;
