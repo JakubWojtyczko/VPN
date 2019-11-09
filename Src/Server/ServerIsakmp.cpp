@@ -1,5 +1,9 @@
 #include "ServerIsakmp.h"
 #include "../Logger.h"
+#include "../SocketInc.h"
+
+#include <string>
+#include <cstring>
 
 namespace vpn
 {
@@ -30,8 +34,19 @@ bool ServerIsakmp::prepare_connection_for_isakmp() {
 }
 
 bool ServerIsakmp::listen_and_handle() {
+    std::string p_addr;
+    int p_port;
+    const int MAX_UDP_LEN = 2250;
+    char buffer[MAX_UDP_LEN];
     while (this -> is_active) {
-
+        int rec_len = server_sock.recv_from(buffer, MAX_UDP_LEN, 0, p_addr, p_port);
+        if(rec_len > 0) {
+            Logger::getInstance().info("ServerIsakmp: reveived " + std::to_string(rec_len) + " bytes");
+            // now get it back and print it
+            Logger::getInstance().info("froom " + p_addr);
+      } else {
+          Logger::getInstance().info("ServerIsakmp: listen - wrong :/");
+      }
     }
     return true;
 }

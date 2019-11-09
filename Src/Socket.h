@@ -1,6 +1,8 @@
 #ifndef VPN_SOCKET
 #define VPN_SOCKET
 
+#include "SocketInc.h"
+
 #include <string>
 #include <vector>
 
@@ -30,7 +32,7 @@ public:
     bool send_to(const void * buff, size_t len, int flags, const char * addr, int port) const;
 
     bool recv_msg(std::vector<char> & v, int flags=0) const;
-    bool recv_from(const void * buff, size_t len, int flags, const char * addr, int port) const;
+    int recv_from(const void * buff, size_t len, int flags, std::string & addr, int & port) const;
 
     bool check_result(int res) const;
     

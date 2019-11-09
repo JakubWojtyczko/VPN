@@ -44,7 +44,9 @@ bool ClientIsakmp::handshake() {
     Logger::getInstance().info("ClientIsakmp: waiting for msg2");
 
     Message1_2 msg2;
-    if (!cli_sock.recv_from(&msg2, sizeof(msg2), 0, SERVER_IP, 500)) {
+    std::string p_addr;
+    int p_port = 500;
+    if (!cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, p_port)) {
         Logger::getInstance().error("Timeout while waiting for msg2: " + cli_sock.last_error_str());
         return false;
     }

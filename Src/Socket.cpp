@@ -1,22 +1,5 @@
 #include "Socket.h"
 
-#ifdef _WIN32 // Windows
-  #ifndef _WIN32_WINNT
-      #define _WIN32_WINNT 0x0501 // Windows XP
-  #endif // _WIN32_WINNT
-  #include <winsock2.h>
-  #include <Ws2tcpip.h>
-#elif defined(__linux__) || defined(__unix__) || defined(_POSIX_VERSION)
-  #include <sys/socket.h>
-  #include <sys/time.h>
-  #include <arpa/inet.h>
-  #include <netdb.h>
-  #include <unistd.h>
-  #include <errno.h>
-#else // not Windows and not POSIX-like
-  #error "Socket.cpp is not available on your OS. Windows and POSIX-like only!"
-#endif // _WIN32
-
 #include <string.h>
 
 #include "Logger.h"
@@ -149,26 +132,29 @@ bool Socket::recv_msg(std::vector<char> & v, int flags) const {
 }
 
 
-bool Socket::recv_from(const void * buff, size_t len, int flags, const char * addr, int port) const {
+int Socket::recv_from(const void * buff, size_t len, int flags, std::string & addr, int & port) const {
     sockaddr_in destination;
     memset(&destination, 0 , sizeof(destination));
     destination.sin_family = AF_INET;
-    destination.sin_addr.s_addr = inet_addr(addr);
+    destination.sin_addr.s_addr = inet_addr(addr.c_str());
     destination.sin_port = htons(port);
     int address_len = sizeof(destination);
-    if (!check_result(recvfrom(fd, (char *)buff, len, flags, (sockaddr *)&destination, &address_len))) {
+    int ret = recvfrom(fd, (char *)buff, len, flags, (sockaddr *)&destination, &address_len);
+    if (!check_result(ret)) {
         Logger::getInstance().error("Socket: recvfrom failed: " + last_error_str());
-        return false;
+        return -1;
     }
-    return true;
+    addr = inet_ntoa(destination.sin_addr);
+    port = ntohs(destination.sin_port);
+    return ret;
 }
+
 
 bool Socket::check_result(int result) const {
 #ifdef _WIN32
     return result != SOCKET_ERROR;
 #else
     return result >= 0;
-#endif // _WIN32  
 }
 
 void Socket::close_socket() {
