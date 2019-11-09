@@ -4,7 +4,7 @@ CLIENT=Client
 SERVER=Server
 
 SOURCE_DIR=Src
-CPPFLAGS=-g -Wall -DW_DEBUG
+CPPFLAGS=-g -Wall -DW_DEBUG -std=c++17
 
 
 TARGETS=server client
@@ -26,6 +26,8 @@ OBJ_CLIENT = $(subst Src/,Out/,$(OBJ_C))
 # add library for WinSockets when Windows
 ifeq ($(OS),Windows_NT)
 LIBS=-lWs2_32
+else
+CPPFLAGS+=pthread
 endif
 
 
