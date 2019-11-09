@@ -7,7 +7,7 @@
 
 int main(int argc, char * argv[]) {
 
-    vpn::Usr self;
+    vpn::Usr self("127.0.12.1");
     std::vector<vpn::Usr> clients;
     vpn::ServerIsakmp isakmp(self, clients);
 

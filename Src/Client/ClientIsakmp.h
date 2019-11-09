@@ -20,8 +20,8 @@ class ClientIsakmp {
 public:
     ClientIsakmp(Usr & user) : 
         user(user), 
-        cli_sock("127.0.0.1", 500, SockTransport::UDP),
-        isakmp(0)  {}
+        cli_sock("127.0.0.1", Isakmp::PORT, SockTransport::UDP)
+        {}
     virtual ~ClientIsakmp() {}
     
     bool connect_to_server();
@@ -34,7 +34,6 @@ protected:
 private:
     Usr & user;
     Socket cli_sock;
-    Isakmp isakmp;
 };
 
 } // namespace vpn

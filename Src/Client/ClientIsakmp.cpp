@@ -32,7 +32,7 @@ bool ClientIsakmp::handshake() {
     // Send message 1 (initial) to the server
     Logger::getInstance().info("ClientIsakmp: sending msg1");
 
-    Message1_2 msg1 = isakmp.prepare_message_1();
+    Message1_2 msg1 = user.get_isakmp().prepare_message_1();
     if (!cli_sock.send_to(&msg1, sizeof(msg1), 0, SERVER_IP, 500)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg1: " + cli_sock.last_error_str());
         return false;
@@ -52,7 +52,7 @@ bool ClientIsakmp::handshake() {
     }
 
     Logger::getInstance().info("ClientIsakmp: Msg2 received. Veryfing...");
-    if (isakmp.verify_message_2(msg2) != SUCCESS) {
+    if (user.get_isakmp().verify_message_2(msg2) != SUCCESS) {
         Logger::getInstance().error("ClientIsakmp: Msg2 verification failed");
         return false;
     }
@@ -63,8 +63,8 @@ bool ClientIsakmp::handshake() {
     // send message 3
     Logger::getInstance().info("ClientIsakmp: sending msg3");
 
-    std::vector<std::uint8_t> msg3 = isakmp.prepare_message_3();
-    if (!cli_sock.send_to(msg3.data(), msg3.size(), 0, SERVER_IP, 500)) {
+    std::vector<std::uint8_t> msg3 = user.get_isakmp().prepare_message_3();
+    if (!cli_sock.send_to(msg3.data(), msg3.size(), 0, SERVER_IP, Isakmp::PORT)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg3: " + cli_sock.last_error_str());
         return false;
     }

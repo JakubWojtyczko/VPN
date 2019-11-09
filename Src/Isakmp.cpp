@@ -2,6 +2,7 @@
 #include "Logger.h"
 #include "Socket.h"
 
+#include "SocketInc.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -9,6 +10,8 @@
 
 namespace vpn {
 
+// following port is reserved for that protocol.
+const int Isakmp::PORT = 500;
 
 void Isakmp::prepare_security_context(Message1_2 & msg) const {
     // SecurityAssociation
@@ -68,7 +71,7 @@ void Isakmp::prepare_security_context(Message1_2 & msg) const {
     msg.id.id_type = 1; // IPV4_ADDR;
     msg.id.protocol = 17; // UDP
     msg.id.port = 0; // Unused
-    msg.id.data = Socket::htnl(this -> ip); // ip
+    msg.id.data = Socket::htnl(0); // ip  TODO
 }
 
 
@@ -103,7 +106,7 @@ Message1_2 Isakmp::prepare_message_1() const {
 IsakmpStatus Isakmp::verify_message_1(Message1_2 const& msg) {
     // verify header
     if (msg.head.init_spi) {
-        source_spi = msg.head.init_spi;
+        dest_spi = msg.head.init_spi;
     } else {
         Logger::getInstance().error("TSAKMP: init spi must be != 0 for message 1");
         return INVALID_SPI;
@@ -125,14 +128,14 @@ IsakmpStatus Isakmp::verify_message_1(Message1_2 const& msg) {
         return INVALID_EXCHANGE_TYPE;
     }
     // store for future use
-    this -> mess_id = msg.head.message_id;
+    this -> mess_id = ntohl(msg.head.message_id);
 
     // verify security association
-    if (msg.sec_assoc.domian_of_interpretation != 1) {
+    if (ntohl(msg.sec_assoc.domian_of_interpretation) != 1) {
         Logger::getInstance().error("TSAKMP: msg1 - DOI not supported. IPSec only");
         return DOI_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.situation != 1) {
+    if (ntohl(msg.sec_assoc.situation) != 1) {
         Logger::getInstance().error("TSAKMP: msg1 - situation should be indetify only");
         return SITUATION_NOT_SUPPOETED;
     }
@@ -147,27 +150,27 @@ IsakmpStatus Isakmp::verify_message_1(Message1_2 const& msg) {
         return INVALID_TRANSFORM_ID;
     }
     // verify attributes
-    if (msg.sec_assoc.proposal.tran.enc_alg.value != 7) {
+    if (ntohs(msg.sec_assoc.proposal.tran.enc_alg.value) != 7) {
         Logger::getInstance().error("TSAKMP: msg1 - encod alg not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.key_len.value != 128) {
+    if (ntohs(msg.sec_assoc.proposal.tran.key_len.value) != 128) {
         Logger::getInstance().error("TSAKMP: msg1 - wrong key length");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.hash_alg.value != 2) {
+    if (ntohs(msg.sec_assoc.proposal.tran.hash_alg.value) != 2) {
         Logger::getInstance().error("TSAKMP: msg1 - hash alg not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.gr_desc.value != 2) {
+    if (ntohs(msg.sec_assoc.proposal.tran.gr_desc.value) != 2) {
         Logger::getInstance().error("TSAKMP: msg1 - group desc not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     };
-    if (msg.sec_assoc.proposal.tran.auth_mod.value != 1) {
+    if (ntohs(msg.sec_assoc.proposal.tran.auth_mod.value) != 1) {
         Logger::getInstance().error("TSAKMP: msg1 - authorisation mode not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.lif_du.value <= CertificateMaxDuration) {
+    if (ntohl(msg.sec_assoc.proposal.tran.lif_du.value) <= CertificateMaxDuration) {
         certificate_expiration = msg.sec_assoc.proposal.tran.lif_du.value;
     } else {
         certificate_expiration = CertificateMaxDuration;
@@ -191,8 +194,8 @@ IsakmpHeader Isakmp::prepare_header_for_message2() const {
     // no flags for msg1
     head.flags = 0;
     // Message ID = 0
-    head.message_id = 0;
-    head.length = sizeof(Message1_2);
+    head.message_id = htonl(this -> mess_id);
+    head.length = htonl(sizeof(Message1_2));
     return head;
 }
 
@@ -262,17 +265,17 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
         Logger::getInstance().error("TSAKMP: invalid exchange type in message 2");
         return INVALID_EXCHANGE_TYPE;
     }
-    if (this -> mess_id != msg.head.message_id) {
+    if (this -> mess_id != ntohl(msg.head.message_id)) {
         Logger::getInstance().error("TSAKMP: invalid message id in message 2");
         return INVALID_MESSAGE_ID;
     }
 
     // verify security association
-    if (msg.sec_assoc.domian_of_interpretation != 1) {
+    if (ntohl(msg.sec_assoc.domian_of_interpretation) != 1) {
         Logger::getInstance().error("TSAKMP: msg2 - DOI not supported. IPSec only");
         return DOI_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.situation != 1) {
+    if (ntohl(msg.sec_assoc.situation) != 1) {
         Logger::getInstance().error("TSAKMP: msg2 - situation should be indetify only");
         return SITUATION_NOT_SUPPOETED;
     }
@@ -287,27 +290,27 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
         return INVALID_TRANSFORM_ID;
     }
     // verify attributes
-    if (msg.sec_assoc.proposal.tran.enc_alg.value != 7) {
+    if (ntohs(msg.sec_assoc.proposal.tran.enc_alg.value) != 7) {
         Logger::getInstance().error("TSAKMP: msg2 - encod alg not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.key_len.value != 128) {
+    if (ntohs(msg.sec_assoc.proposal.tran.key_len.value) != 128) {
         Logger::getInstance().error("TSAKMP: msg2 - wrong key length");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.hash_alg.value != 2) {
+    if (ntohs(msg.sec_assoc.proposal.tran.hash_alg.value) != 2) {
         Logger::getInstance().error("TSAKMP: msg2 - hash alg not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    if (msg.sec_assoc.proposal.tran.gr_desc.value != 2) {
+    if (ntohs(msg.sec_assoc.proposal.tran.gr_desc.value) != 2) {
         Logger::getInstance().error("TSAKMP: msg2 - group desc not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     };
-    if (msg.sec_assoc.proposal.tran.auth_mod.value != 1) {
+    if (ntohs(msg.sec_assoc.proposal.tran.auth_mod.value) != 1) {
         Logger::getInstance().error("TSAKMP: msg2 - authorisation mode not supported");
         return ATTRIBUTES_NOT_SUPPORTED;
     }
-    certificate_expiration = msg.sec_assoc.proposal.tran.lif_du.value;
+    certificate_expiration = ntohl(msg.sec_assoc.proposal.tran.lif_du.value);
     Logger::getInstance().info("TSAKMP: msg2 - life duration: " + std::to_string(certificate_expiration));
 
     return IsakmpStatus::SUCCESS;

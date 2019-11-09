@@ -40,7 +40,7 @@ class Isakmp {
 
 public:
     // for responder ip - its own ip, for initiator ip=0
-    Isakmp(std::uint32_t const& ip_address) : ip(ip_address), source_spi(std::rand() / 2 + 100) {}
+    Isakmp(std::string const& ip_address) : ip(ip_address), source_spi(std::rand() / 2 + 100) {}
     
     void prepare_security_context(Message1_2 & msg) const;
 
@@ -56,6 +56,8 @@ public:
     std::vector<std::uint8_t> prepare_message_3() const;
     bool verify_message_3(IsakmpHeader const& head, std::vector<std::uint8_t> const& content) const;
 
+  const static int PORT;
+
 protected:
     void prepare_key(std::uint8_t key[128], std::string const& key_hex) const;
 
@@ -67,7 +69,7 @@ private:
     // our secret value for decoding/encoding messages over IPSec
     std::string secret_hex;
     // Responder IPv4 address
-    std::uint32_t ip;
+    std::string ip;
 
     std::uint64_t source_spi;
     std::uint64_t dest_spi;

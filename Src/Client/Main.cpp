@@ -5,7 +5,7 @@
 
 int main() {
     
-    vpn::Usr self;
+    vpn::Usr self("127.0.0.1");
     vpn::ClientIsakmp isakmp(self);
 
     isakmp.connect_to_server();
