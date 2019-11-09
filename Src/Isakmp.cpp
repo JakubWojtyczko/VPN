@@ -1,8 +1,11 @@
 #include "Isakmp.h"
 #include "Logger.h"
+#include "Socket.h"
+
 
 #include <cstdlib>
 #include <cstring>
+
 
 namespace vpn {
 
@@ -11,13 +14,13 @@ void Isakmp::prepare_security_context(Message1_2 & msg) const {
     // SecurityAssociation
     msg.sec_assoc.next_payload = 4; // Key Exchange 
     msg.sec_assoc.reserved = 0;
-    msg.sec_assoc.length = sizeof(msg.sec_assoc);
-    msg.sec_assoc.domian_of_interpretation = 1; // IPSEC
-    msg.sec_assoc.situation = 1; // Identify only
+    msg.sec_assoc.length = Socket::htns(sizeof(msg.sec_assoc));
+    msg.sec_assoc.domian_of_interpretation = Socket::htnl(1); // IPSEC
+    msg.sec_assoc.situation = Socket::htnl(1); // Identify only
         // Proposal
         msg.sec_assoc.proposal.next_payload = 0; // None
         msg.sec_assoc.proposal.reserved = 0;
-        msg.sec_assoc.proposal.length = sizeof(msg.sec_assoc.proposal);
+        msg.sec_assoc.proposal.length = Socket::htns(sizeof(msg.sec_assoc.proposal));
         msg.sec_assoc.proposal.prop_num = 1; // one propsal
         msg.sec_assoc.proposal.proto_id = 1; // ISAKMP
         msg.sec_assoc.proposal.spi_size = 0;
@@ -25,47 +28,47 @@ void Isakmp::prepare_security_context(Message1_2 & msg) const {
             // Transform
             msg.sec_assoc.proposal.tran.next = 0; // None
             msg.sec_assoc.proposal.tran.reserved = 0;
-            msg.sec_assoc.proposal.tran.length = sizeof(msg.sec_assoc.proposal.tran);
+            msg.sec_assoc.proposal.tran.length = Socket::htns(sizeof(msg.sec_assoc.proposal.tran));
             msg.sec_assoc.proposal.tran.num = 1;
             msg.sec_assoc.proposal.tran.id = 1; // KEY_IKE
             msg.sec_assoc.proposal.tran.reserved_2 = 0; 
                 // Encryption algorithm
-                msg.sec_assoc.proposal.tran.enc_alg.format = 0x800E; // (TV - type/value)
-                msg.sec_assoc.proposal.tran.enc_alg.value = 7;  // TODO: AeS-CBC
+                msg.sec_assoc.proposal.tran.enc_alg.format = Socket::htns(0x8001); // (TV - type/value)
+                msg.sec_assoc.proposal.tran.enc_alg.value = Socket::htns(7);  // TODO: AeS-CBC
                 // Key Length
-                msg.sec_assoc.proposal.tran.key_len.format = 0x800E; // TV
-                msg.sec_assoc.proposal.tran.key_len.value = 128; // always the same length
+                msg.sec_assoc.proposal.tran.key_len.format = Socket::htns(0x800E); // TV
+                msg.sec_assoc.proposal.tran.key_len.value = Socket::htns(128); // always the same length
                 // Hash algorithm
-                msg.sec_assoc.proposal.tran.hash_alg.format = 0x800E; // TV 
-                msg.sec_assoc.proposal.tran.hash_alg.value = 2; // SHA algorithm
+                msg.sec_assoc.proposal.tran.hash_alg.format = Socket::htns(0x8002); // TV 
+                msg.sec_assoc.proposal.tran.hash_alg.value = Socket::htns(2); // SHA algorithm
                 // Group description
-                msg.sec_assoc.proposal.tran.gr_desc.format = 0x800E; // TV
-                msg.sec_assoc.proposal.tran.gr_desc.value = 2; // Alternate 1024bit MODP group
+                msg.sec_assoc.proposal.tran.gr_desc.format = Socket::htns(0x8004); // TV
+                msg.sec_assoc.proposal.tran.gr_desc.value = Socket::htns(2); // Alternate 1024bit MODP group
                 // Authentication Mode
-                msg.sec_assoc.proposal.tran.auth_mod.format = 0x800E; 
-                msg.sec_assoc.proposal.tran.auth_mod.value = 1; // Pre-shared key
+                msg.sec_assoc.proposal.tran.auth_mod.format = Socket::htns(0x8003); 
+                msg.sec_assoc.proposal.tran.auth_mod.value = Socket::htns(1); // Pre-shared key
                 // Life type
-                msg.sec_assoc.proposal.tran.lif_ty.format = 0x800E; // TV 
-                msg.sec_assoc.proposal.tran.lif_ty.value = 1; // seconds
+                msg.sec_assoc.proposal.tran.lif_ty.format = Socket::htns(0x800B); // TV 
+                msg.sec_assoc.proposal.tran.lif_ty.value = Socket::htns(1); // seconds
                 // Life duration
-                msg.sec_assoc.proposal.tran.lif_du.format = 0x000C; // type/length/value
-                msg.sec_assoc.proposal.tran.lif_du.length = sizeof(msg.sec_assoc.proposal.tran.lif_du.value);
-                msg.sec_assoc.proposal.tran.lif_du.value = 0x4F1A00; // 24 h
+                msg.sec_assoc.proposal.tran.lif_du.format = Socket::htns(12); // type/length/value
+                msg.sec_assoc.proposal.tran.lif_du.length = Socket::htns(sizeof(msg.sec_assoc.proposal.tran.lif_du.value));
+                msg.sec_assoc.proposal.tran.lif_du.value = Socket::htnl(86400); // 24 h
 
     // Key Exchange
     msg.key.next = 5; // Identification
     msg.key.reserved = 0;
-    msg.key.length = sizeof(msg.key);
+    msg.key.length = Socket::htns(sizeof(msg.key));
     prepare_key(msg.key.data, our_public_key_hex);
 
     // Identification
     msg.id.next = 0; // None
     msg.id.reserved = 0;
-    msg.id.length = sizeof(msg.id);
+    msg.id.length = Socket::htns(sizeof(msg.id));
     msg.id.id_type = 1; // IPV4_ADDR;
     msg.id.protocol = 17; // UDP
     msg.id.port = 0; // Unused
-    msg.id.data = this -> ip; // ip
+    msg.id.data = Socket::htnl(this -> ip); // ip
 }
 
 
@@ -85,7 +88,7 @@ IsakmpHeader Isakmp::prepare_header_for_message1() const {
     head.flags = 0;
     // Message ID = 0
     head.message_id = 0;
-    head.length = sizeof(Message1_2);
+    head.length = Socket::htnl(sizeof(Message1_2));
     return head;
 }
 

@@ -35,6 +35,10 @@ public:
     bool check_result(int res) const;
     
     void close_socket();
+
+    static unsigned int htnl(unsigned int val);
+    static unsigned short int htns(unsigned short int val);
+
 protected:
     // WinSocket requires that
     int _sock_init() const;
@@ -55,6 +59,7 @@ private:
 };
 
 } // namespace vpn
+
 
 
 #endif // VPN_SOCKET

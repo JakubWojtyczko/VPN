@@ -8,6 +8,7 @@ const char * SERVER_IP = "127.0.12.1"; // TODO can't be hardcoded
 
 bool ClientIsakmp::connect_to_server() {
     // create socket, bind address and port
+    Logger::getInstance().info("ClientIsakmp - prepare connection");
     if (!prepare_connection_for_isakmp()) {
         Logger::getInstance().error("ClientIsakmp: cannot prepare connetion");
         return false;
@@ -15,11 +16,13 @@ bool ClientIsakmp::connect_to_server() {
     // set timout 100 [ms] 
     cli_sock.set_timeot(0, 10000); // 0 sec, 10000 usec
 
+    Logger::getInstance().info("ClientIsakmp - handshake begin");
     if (!handshake()) {
         Logger::getInstance().error("Handshake failed  " + cli_sock.last_error_str());
         cli_sock.close_socket();
         return false;
     }
+    Logger::getInstance().info("ClientIsakmp - handshake end");
     return true;
 }
 

@@ -183,4 +183,12 @@ void Socket::close_socket() {
 }
 
 
+unsigned int Socket::htnl(unsigned int val) {
+    return htonl(val);
+}
+
+unsigned short int Socket::htns(unsigned short int val) {
+    return htons(val);
+}
+
 } // namespace vpn

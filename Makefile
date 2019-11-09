@@ -4,7 +4,7 @@ CLIENT=Client
 SERVER=Server
 
 SOURCE_DIR=Src
-CPPFLAGS=-g -Wall -DW_DBUG
+CPPFLAGS=-g -Wall -DW_DEBUG
 
 
 TARGETS=server client

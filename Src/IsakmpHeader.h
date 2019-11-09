@@ -32,7 +32,7 @@ struct Message1_2 {
         std::uint8_t next_payload;
         std::uint8_t reserved;
         std::uint16_t length;
-        std::uint16_t domian_of_interpretation;
+        std::uint32_t domian_of_interpretation;
         std::uint32_t situation;
         struct Proposal {
             std::uint8_t next_payload;
