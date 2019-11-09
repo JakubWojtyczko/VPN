@@ -1,6 +1,7 @@
 #include "ServerIsakmp.h"
 #include "../Logger.h"
 #include "../SocketInc.h"
+#include "../Isakmp.h"
 
 #include <string>
 #include <cstring>
@@ -41,15 +42,24 @@ bool ServerIsakmp::listen_and_handle() {
     while (this -> is_active) {
         int rec_len = server_sock.recv_from(buffer, MAX_UDP_LEN, 0, p_addr, p_port);
         if(rec_len > 0) {
-            Logger::getInstance().info("ServerIsakmp: reveived " + std::to_string(rec_len) + " bytes");
-            // now get it back and print it
-            Logger::getInstance().info("froom " + p_addr);
+            Logger::getInstance().info("ServerIsakmp: reveived " + std::to_string(rec_len)
+                + " bytes from " + p_addr + ":" + std::to_string(p_port));
       } else {
-          Logger::getInstance().info("ServerIsakmp: listen - wrong :/");
+          Logger::getInstance().info("ServerIsakmp: listen - zero data reveived");
       }
     }
     return true;
 }
+
+
+void ServerIsakmp::handle(std::string const& ip, char * buf, int len) {
+    if (is_client_added(ip) == false) {
+        // new client - received message 1
+        Message1_2 msg1;
+        std::copy(buf, buf + len, msg1);
+    }
+}
+
 
 void ServerIsakmp::shut_down() {
     this -> is_active = false;
@@ -60,6 +70,16 @@ void ServerIsakmp::close_server() {
     Logger::getInstance().info("ServerIsakmp: closing connetion...");
     server_sock.close_socket();
     Logger::getInstance().info("ServerIsakmp: connetion closed");
+}
+
+
+int ServerIsakmp::is_client_added(std::string const& ip) const {
+    for (unsigned i=0; i < clients.size(); ++i) {
+        if (clients[i].get_ip() == ip) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 

@@ -155,6 +155,7 @@ bool Socket::check_result(int result) const {
     return result != SOCKET_ERROR;
 #else
     return result >= 0;
+#endif // _WIN32  
 }
 
 void Socket::close_socket() {
