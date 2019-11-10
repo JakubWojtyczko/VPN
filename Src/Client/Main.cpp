@@ -10,7 +10,9 @@ int main() {
     vpn::Usr self("127.0.0.1");
     vpn::ClientIsakmp isakmp(self);
 
-    isakmp.connect_to_server();
+    if (isakmp.connect_to_server() == false) {
+        exit(1);
+    }
 
     std::thread isakmp_thread = isakmp.start();
 
