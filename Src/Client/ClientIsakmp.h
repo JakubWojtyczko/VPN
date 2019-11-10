@@ -4,7 +4,7 @@
 #include "../Usr.h"
 #include "../Socket.h"
 #include "../Isakmp.h"
-
+#include "../Threads.h"
 
 #include <string>
 
@@ -20,20 +20,25 @@ class ClientIsakmp {
 public:
     ClientIsakmp(Usr & user) : 
         user(user), 
-        cli_sock("127.0.0.1", Isakmp::PORT, SockTransport::UDP)
+        cli_sock("127.0.0.1", Isakmp::PORT, SockTransport::UDP),
+        is_active(true)
         {}
     virtual ~ClientIsakmp() {}
     
+    std::thread start();
+    void close();
     bool connect_to_server();
 
 protected:
 
     bool prepare_connection_for_isakmp();
     bool handshake();
+    void listen();
 
 private:
     Usr & user;
     Socket cli_sock;
+    bool is_active;
 };
 
 } // namespace vpn

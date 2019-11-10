@@ -138,7 +138,7 @@ int Socket::recv_from(const void * buff, size_t len, int flags, std::string & ad
     destination.sin_family = AF_INET;
     destination.sin_addr.s_addr = inet_addr(addr.c_str());
     destination.sin_port = htons(port);
-    int address_len = sizeof(destination);
+    socklen_t address_len = sizeof(destination);
     int ret = recvfrom(fd, (char *)buff, len, flags, (sockaddr *)&destination, &address_len);
     if (!check_result(ret)) {
         Logger::getInstance().error("Socket: recvfrom failed: " + last_error_str());

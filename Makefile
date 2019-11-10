@@ -27,7 +27,7 @@ OBJ_CLIENT = $(subst Src/,Out/,$(OBJ_C))
 ifeq ($(OS),Windows_NT)
 LIBS=-lWs2_32
 else
-CPPFLAGS+=pthread
+LFLAGS=-pthread
 endif
 
 
@@ -49,10 +49,10 @@ endif
 
 
 server: $(OBJ_COMMON) $(OBJ_SERVER)
-	$(CXX) $(OBJ_COMMON) $(OBJ_SERVER) -o $@ $(LIBS)
+	$(CXX) $(LFLAGS) $(OBJ_COMMON) $(OBJ_SERVER) -o $@ $(LIBS)
 
 client: $(OBJ_COMMON) $(OBJ_CLIENT)
-	$(CXX) $(OBJ_COMMON) $(OBJ_CLIENT) -o $@ $(LIBS)
+	$(CXX) $(LFLAGS) $(OBJ_COMMON) $(OBJ_CLIENT) -o $@ $(LIBS)
 
 $(OBJ_COMMON): $(SRC_COMMON)
 	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))

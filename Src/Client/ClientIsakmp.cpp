@@ -78,6 +78,19 @@ bool ClientIsakmp::handshake() {
     return true;
 }
 
+std::thread ClientIsakmp::start() {
+    return std::thread([this] {listen();});
+}
+
+void ClientIsakmp::listen() {
+    while (is_active) {
+        // listen
+    }
+}
+
+void ClientIsakmp::close() {
+    this -> is_active = false;
+}
 
 bool ClientIsakmp::prepare_connection_for_isakmp() {
     Logger::getInstance().info("ClientIsakmp: creating socket");

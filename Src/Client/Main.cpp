@@ -2,6 +2,8 @@
 #include "ClientIsakmp.h"
 
 
+#include <iostream>
+
 
 int main() {
     
@@ -10,6 +12,12 @@ int main() {
 
     isakmp.connect_to_server();
 
+    std::thread isakmp_thread = isakmp.start();
+
+    std::string str;
+    std::cin >> str;
+    isakmp.close();
+    isakmp_thread.join();
 
     return 0;
 }
