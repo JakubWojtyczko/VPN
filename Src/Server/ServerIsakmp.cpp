@@ -15,10 +15,9 @@ std::thread ServerIsakmp::start() {
     Logger::getInstance().info("ClientIsakmp - prepare connection");
     if (!prepare_connection_for_isakmp()) {
         Logger::getInstance().error("ClientIsakmp: cannot prepare connetion");
-        
+        exit(1);
     }
     return std::thread([this] {listen_and_handle();});
-
 }
 
 bool ServerIsakmp::prepare_connection_for_isakmp() {
