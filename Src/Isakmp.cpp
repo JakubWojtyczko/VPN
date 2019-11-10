@@ -90,7 +90,7 @@ IsakmpHeader Isakmp::prepare_header_for_message1() const {
     // no flags for msg1
     head.flags = 0;
     // Message ID = 0
-    head.message_id = 0;
+    head.message_id = Socket::htnl(0);
     head.length = Socket::htnl(sizeof(Message1_2));
     return head;
 }
@@ -192,7 +192,7 @@ IsakmpHeader Isakmp::prepare_header_for_message2() const {
     // exchange type - Aggresive mode (4)
     head.exchange_type = 4;
     // no flags for msg1
-    head.flags = 0;
+    head.flags = htonl(0);
     // Message ID = 0
     head.message_id = htonl(this -> mess_id);
     head.length = htonl(sizeof(Message1_2));
@@ -222,22 +222,34 @@ IsakmpHeader Isakmp::prepare_header_for_message3() const {
     // no flags for msg1
     head.flags = 0;
     // Message ID = 0
-    head.message_id = 0;
+    head.message_id = htonl(mess_id);
     // Important: length field is incomplete
     // We have to add the size of hashed data!
     head.length = sizeof(IsakmpHeader);
     return head;
 }
 
-
-std::vector<std::uint8_t> Isakmp::prepare_message_3() const {
-    IsakmpHeader head = prepare_header_for_message3();
-    const int header_len = sizeof(head);
-    std::uint8_t head_memory[header_len] = {0};
-    std::memcpy(head_memory, &head, header_len);
-    std::vector<std::uint8_t> msg3(head_memory, head_memory + header_len);
-    // Add encrypted msg3 content 
-    // TODO !
+Buffer<std::uint8_t> Isakmp::prepare_message_3() const {
+    // prepare message header
+    IsakmpHeader head = prepare_header_for_message3();    
+    // prepare hash data 
+    //TODO TDO
+    std::vector<std::uint8_t> encr_data(120);
+    for (auto & c : encr_data) {
+        c = std::rand();
+    }
+    // prepare hash payload header
+    IsakmpHash hash;
+    hash.next = 0; // next payload - None
+    hash.reserved = 0;
+    hash.length = htons(sizeof(hash) + encr_data.size());
+    head.length = htonl(sizeof(head) + sizeof(hash) + encr_data.size());
+    // copy head to buffer
+    Buffer <std::uint8_t> msg3(&head, sizeof(head));
+    // copy hash payload head to buffer
+    msg3.insert(&hash, sizeof(hash));
+    // copy data to buffer
+    msg3.insert(encr_data);
     return msg3;
 }
 
@@ -266,7 +278,8 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
         return INVALID_EXCHANGE_TYPE;
     }
     if (this -> mess_id != ntohl(msg.head.message_id)) {
-        Logger::getInstance().error("TSAKMP: invalid message id in message 2");
+        Logger::getInstance().error("TSAKMP: invalid mess id in msg2: " + std::to_string(ntohl(msg.head.message_id))
+             + " but " + std::to_string(mess_id) + " was expected");
         return INVALID_MESSAGE_ID;
     }
 

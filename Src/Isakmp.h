@@ -2,6 +2,7 @@
 #define VPN_ISAKMP
 
 #include "IsakmpHeader.h"
+#include "Buffer.h"
 
 #include <string>
 #include <vector>
@@ -40,7 +41,7 @@ class Isakmp {
 
 public:
     // for responder ip - its own ip, for initiator ip=0
-    Isakmp(std::string const& ip_address) : ip(ip_address), source_spi(std::rand() / 2 + 100) {}
+    Isakmp(std::string const& ip_address) : ip(ip_address), source_spi(std::rand() / 2 + 100), mess_id(0) {}
     
     void prepare_security_context(Message1_2 & msg) const;
 
@@ -53,7 +54,7 @@ public:
     IsakmpStatus verify_message_2(Message1_2 const& msg2);
 
     IsakmpHeader prepare_header_for_message3() const;
-    std::vector<std::uint8_t> prepare_message_3() const;
+    Buffer<std::uint8_t> prepare_message_3() const;
     bool verify_message_3(IsakmpHeader const& head, std::vector<std::uint8_t> const& content) const;
 
   const static int PORT;
@@ -78,7 +79,8 @@ private:
     std::uint32_t certificate_expiration;
 };
 
+
 } // namespace vpn
- 
+
 
 #endif // VPN_ISAKMP

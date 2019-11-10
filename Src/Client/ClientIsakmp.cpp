@@ -1,8 +1,11 @@
 #include "ClientIsakmp.h"
 #include "../Logger.h"
 #include "../IsakmpHeader.h"
+#include "../Buffer.h"
+
 
 namespace vpn {
+
 
 const char * SERVER_IP = "127.0.12.1"; // TODO can't be hardcoded
 
@@ -63,7 +66,7 @@ bool ClientIsakmp::handshake() {
     // send message 3
     Logger::getInstance().info("ClientIsakmp: sending msg3");
 
-    std::vector<std::uint8_t> msg3 = user.get_isakmp().prepare_message_3();
+    Buffer<std::uint8_t> msg3 = user.get_isakmp().prepare_message_3();
     if (!cli_sock.send_to(msg3.data(), msg3.size(), 0, SERVER_IP, Isakmp::PORT)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg3: " + cli_sock.last_error_str());
         return false;

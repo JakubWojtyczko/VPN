@@ -119,5 +119,13 @@ struct Message1_2 {
 #pragma pack(pop)
 
 
+#pragma pack(push, 1)
+struct IsakmpHash {
+    std::uint8_t next;
+    std::uint8_t reserved;
+    std::uint16_t length;
+};
+#pragma pack(pop)
+
 
 #endif // VPN_ISAKMP_HEADER
