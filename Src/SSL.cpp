@@ -1,10 +1,8 @@
 #include "SSL.h"
 #include "Logger.h"
 
-
-#pragma comment(lib, "libeay32.dll")
-#pragma comment(lib, "libssl32.dll")
-#pragma comment(lib, "ssleay32.dll")
+#include <openssl/evp.h>
+#include <openssl/sha.h>
 
 namespace vpn {
     
@@ -82,7 +80,85 @@ std::string Ssl::get_pub_key_hex() {
     return std::string(buffer);
 }
 
+Buffer <std::uint8_t> Ssl::encode_text(Buffer <std::uint8_t> buffer) const {
+
+    EVP_CIPHER_CTX * cipher_context = nullptr;
+    if ((cipher_context = EVP_CIPHER_CTX_new()) == nullptr) {
+        Logger::getInstance().error("DH: evp ciper ctx new failed");
+        return Buffer <std::uint8_t>();
+    }
+    if(EVP_EncryptInit_ex(cipher_context, EVP_aes_192_cfb(), nullptr, secret, nullptr) != 1) {
+        Logger::getInstance().error("DH: evp encrypt init failed");
+        EVP_CIPHER_CTX_free(cipher_context);
+        return Buffer <std::uint8_t>();
+    }
+    int len;
+    unsigned char crip_text[1025]; // TODO - fixed size
+    if(EVP_EncryptUpdate(cipher_context, crip_text, &len, buffer.data(), buffer.size()) != 1) {
+        Logger::getInstance().error("DH: evp encrypt update failed");
+        EVP_CIPHER_CTX_free(cipher_context);
+        return Buffer <std::uint8_t>();
+    }
+    int size = len;
+    if(EVP_EncryptFinal_ex(cipher_context, crip_text + len, &len) != 1) {
+        Logger::getInstance().error("DH: evp encrypt final failed");
+        EVP_CIPHER_CTX_free(cipher_context);
+        return Buffer <std::uint8_t>();
+    }
+    EVP_CIPHER_CTX_free(cipher_context);
+    return Buffer <std::uint8_t>(crip_text, crip_text + size);
+}
+
+
+Buffer <std::uint8_t> Ssl::decode_text(Buffer <std::uint8_t> buffer) const {
+    EVP_CIPHER_CTX * cipher_context = nullptr;
+    if ((cipher_context = EVP_CIPHER_CTX_new()) == nullptr) {
+        Logger::getInstance().error("DH: evp ciper ctx new failed");
+        return Buffer <std::uint8_t>();
+    }
+    if(EVP_DecryptInit_ex(cipher_context, EVP_aes_192_cfb(), nullptr, secret, nullptr) != 1) {
+        Logger::getInstance().error("DH: evp decrypt init failed");
+        EVP_CIPHER_CTX_free(cipher_context);
+        return Buffer <std::uint8_t>();
+    }
+    int len;
+    std::uint8_t text[1024]; // TODO
+    if(EVP_DecryptUpdate(cipher_context, text, &len, buffer.data(), buffer.size()) != 1) {
+        Logger::getInstance().error("DH: evp decrypt update failed");
+        EVP_CIPHER_CTX_free(cipher_context);
+        return Buffer <std::uint8_t>();
+    }
+    int size = len;
+    if(EVP_DecryptFinal_ex(cipher_context, text + len, &len) != 1) {
+        Logger::getInstance().error("DH: evp decrypt final failed");
+        EVP_CIPHER_CTX_free(cipher_context);
+        return Buffer <std::uint8_t>();
+    }
+    size += len;
+    EVP_CIPHER_CTX_free(cipher_context);
+    return Buffer <std::uint8_t> (text, text + size);
+}
+
+
+Buffer <std::uint8_t> Ssl::calculate_hash(Buffer <std::uint8_t> buffer) const {
+    SHA256_CTX sha_256_ctx;
+    Buffer <std::uint8_t> hash;
+    if (SHA256_Init(&sha_256_ctx) == 0) {
+        Logger::getInstance().error("SSL: hash init failed");
+        return Buffer <std::uint8_t>();
+    }
+    if (SHA256_Update(&sha_256_ctx, buffer.data(), buffer.size()) == 0) {
+        Logger::getInstance().error("SSL: hash update failed");
+        return Buffer <std::uint8_t>();
+    }
+    std::uint8_t hash_data[SHA256_DIGEST_LENGTH];
+    if (SHA256_Final(hash_data, &sha_256_ctx) == 0) {
+        Logger::getInstance().error("SSL: hash final failed");
+        return Buffer <std::uint8_t>();
+    }
+    return Buffer <std::uint8_t> (hash_data, hash_data + SHA256_DIGEST_LENGTH);
+}
+
 
 } // namespace vpn
-
 

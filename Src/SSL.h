@@ -4,6 +4,8 @@
 #include <string>
 #include <openssl/dh.h>
 
+#include "Buffer.h"
+
 namespace vpn  {
 
 
@@ -14,11 +16,17 @@ public:
         secret(nullptr),  secret_size(0), other_public(nullptr) {}
     virtual ~Ssl();
 
+    // Important! Must be called after object construction.
     bool init();
 
     bool receive_public_key(std::string const& key);
     std::string get_pub_key_hex();
-    
+
+    Buffer <std::uint8_t> encode_text(Buffer <std::uint8_t> buffer) const;
+    Buffer <std::uint8_t> decode_text(Buffer <std::uint8_t> buffer) const;
+
+    Buffer <std::uint8_t> calculate_hash(Buffer <std::uint8_t> buffer) const;
+
 protected:
     bool compute_secret();
 
