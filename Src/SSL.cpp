@@ -142,23 +142,22 @@ Buffer <std::uint8_t> Ssl::decode_text(Buffer <std::uint8_t> buffer) const {
 
 Buffer <std::uint8_t> Ssl::calculate_hash(Buffer <std::uint8_t> buffer) const {
     SHA256_CTX sha_256_ctx;
-    Buffer <std::uint8_t> hash;
+    Buffer <std::uint8_t> empty_hash;
     if (SHA256_Init(&sha_256_ctx) == 0) {
         Logger::getInstance().error("SSL: hash init failed");
-        return Buffer <std::uint8_t>();
+        return empty_hash;
     }
     if (SHA256_Update(&sha_256_ctx, buffer.data(), buffer.size()) == 0) {
         Logger::getInstance().error("SSL: hash update failed");
-        return Buffer <std::uint8_t>();
+        return empty_hash;
     }
     std::uint8_t hash_data[SHA256_DIGEST_LENGTH];
     if (SHA256_Final(hash_data, &sha_256_ctx) == 0) {
         Logger::getInstance().error("SSL: hash final failed");
-        return Buffer <std::uint8_t>();
+        return empty_hash;
     }
     return Buffer <std::uint8_t> (hash_data, hash_data + SHA256_DIGEST_LENGTH);
 }
 
 
 } // namespace vpn
-
