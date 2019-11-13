@@ -21,7 +21,6 @@ Ssl::~Ssl() {
     }
 }
 
-
 bool Ssl::init() {
     if ((priv_key = DH_new()) == NULL) {
             Logger::getInstance().error("DH_get_1024_160: cannot create");
@@ -80,7 +79,7 @@ std::string Ssl::get_pub_key_hex() {
     return std::string(buffer);
 }
 
-Buffer <std::uint8_t> Ssl::encode_text(Buffer <std::uint8_t> buffer) const {
+Buffer <std::uint8_t> Ssl::encode_text(Buffer <std::uint8_t> const&  buffer) const {
 
     EVP_CIPHER_CTX * cipher_context = nullptr;
     if ((cipher_context = EVP_CIPHER_CTX_new()) == nullptr) {
@@ -110,7 +109,7 @@ Buffer <std::uint8_t> Ssl::encode_text(Buffer <std::uint8_t> buffer) const {
 }
 
 
-Buffer <std::uint8_t> Ssl::decode_text(Buffer <std::uint8_t> buffer) const {
+Buffer <std::uint8_t> Ssl::decode_text(Buffer <std::uint8_t> const& buffer) const {
     EVP_CIPHER_CTX * cipher_context = nullptr;
     if ((cipher_context = EVP_CIPHER_CTX_new()) == nullptr) {
         Logger::getInstance().error("DH: evp ciper ctx new failed");
@@ -140,7 +139,7 @@ Buffer <std::uint8_t> Ssl::decode_text(Buffer <std::uint8_t> buffer) const {
 }
 
 
-Buffer <std::uint8_t> Ssl::calculate_hash(Buffer <std::uint8_t> buffer) const {
+Buffer <std::uint8_t> Ssl::calculate_hash(Buffer <std::uint8_t> const& buffer) const {
     SHA256_CTX sha_256_ctx;
     Buffer <std::uint8_t> empty_hash;
     if (SHA256_Init(&sha_256_ctx) == 0) {

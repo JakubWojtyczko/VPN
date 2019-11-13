@@ -6,6 +6,7 @@ SERVER=Server
 SOURCE_DIR=Src
 CPPFLAGS=-g -Wall -DW_DEBUG -std=c++17
 
+LIBS=-lssl -lcrypto
 
 TARGETS=server client
 TARGETS_WIN_EXT=server.exe client.exe
@@ -25,7 +26,7 @@ OBJ_CLIENT = $(subst Src/,Out/,$(OBJ_C))
 
 # add library for WinSockets when Windows
 ifeq ($(OS),Windows_NT)
-LIBS=-lWs2_32
+WIN_LIBS=-lWs2_32 -lgdi32
 else
 LFLAGS=-pthread
 endif
@@ -49,10 +50,10 @@ endif
 
 
 server: $(OBJ_COMMON) $(OBJ_SERVER)
-	$(CXX) $(LFLAGS) $(OBJ_COMMON) $(OBJ_SERVER) -o $@ $(LIBS)
+	$(CXX) $(LFLAGS) $(OBJ_COMMON) $(OBJ_SERVER) -o $@ $(LIBS) $(WIN_LIBS)
 
 client: $(OBJ_COMMON) $(OBJ_CLIENT)
-	$(CXX) $(LFLAGS) $(OBJ_COMMON) $(OBJ_CLIENT) -o $@ $(LIBS)
+	$(CXX) $(LFLAGS) $(OBJ_COMMON) $(OBJ_CLIENT) -o $@ $(LIBS) $(WIN_LIBS)
 
 $(OBJ_COMMON): $(SRC_COMMON)
 	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))

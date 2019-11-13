@@ -22,10 +22,10 @@ public:
     bool receive_public_key(std::string const& key);
     std::string get_pub_key_hex();
 
-    Buffer <std::uint8_t> encode_text(Buffer <std::uint8_t> buffer) const;
-    Buffer <std::uint8_t> decode_text(Buffer <std::uint8_t> buffer) const;
+    Buffer <std::uint8_t> encode_text(Buffer <std::uint8_t> const& buffer) const;
+    Buffer <std::uint8_t> decode_text(Buffer <std::uint8_t> const& buffer) const;
 
-    Buffer <std::uint8_t> calculate_hash(Buffer <std::uint8_t> buffer) const;
+    Buffer <std::uint8_t> calculate_hash(Buffer <std::uint8_t> const& buffer) const;
 
 protected:
     bool compute_secret();

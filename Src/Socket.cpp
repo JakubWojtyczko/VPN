@@ -89,7 +89,7 @@ bool Socket::set_timeot(int sec, int usec) const {
     timeval tv;
     tv.tv_sec = sec;
     tv.tv_usec = usec;
-    if (check_result(setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char * )&tv, sizeof(tv)))) {
+    if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char * )&tv, sizeof(tv)) != 0) {
         Logger::getInstance().error("Socket:set timeout failed: " + last_error_str());
         return false;
     }

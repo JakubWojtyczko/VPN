@@ -32,8 +32,17 @@ public:
         this -> _data.insert(_data.end(), other.begin(), other.end());
     }
 
-    inline T * data() {
+    inline T const * data() const {
         return _data.data();
+    }
+
+    // return new buffer containing first n elements
+    // flush returned data from itself
+    Buffer get_first_n(size_t n) {
+        size_t ret_size = (n > _data.size() ? _data.size() : n);
+        Buffer <T> new_buffer(_data.data(), _data.data() + ret_size);
+        this -> _data().erase(_data.begin(), _data.begin() + ret_size);
+        return new_buffer;
     }
 
     inline Buffer operator+(Buffer const& other) const {
