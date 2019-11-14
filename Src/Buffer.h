@@ -36,6 +36,10 @@ public:
         return _data.data();
     }
 
+    inline T const& operator[](int i) const {
+        return _data[i];
+    }
+
     // return new buffer containing first n elements
     // flush returned data from itself
     Buffer get_first_n(size_t n) {

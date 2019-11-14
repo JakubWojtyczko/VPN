@@ -40,6 +40,12 @@ void Logger::info(std::string const& info) {
 #endif // W_DEBUG
 }
 
+void Logger::buff(Buffer<std::uint8_t> const& buff) {
+    for (int i=0; i<buff.size(); ++i) {
+        std::printf("%02x ", buff[i]);
+    }
+}
+
 std::string & Logger::operator[](LoggerMessageType type) {
     if (type == LoggerMessageType::INFO_T) {
         return this -> last_info_log;

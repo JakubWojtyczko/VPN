@@ -4,6 +4,8 @@
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 
+
+
 namespace vpn {
     
 Ssl::~Ssl() {
@@ -69,14 +71,13 @@ bool Ssl::compute_secret() {
     return true;
 }
 
-std::string Ssl::get_pub_key_hex() {
-    char buffer[129]; // TODO 
+Buffer <std::uint8_t> Ssl::get_pub_key_hex() {
+    char buffer[128]; // TODO 
     if (BN_hex2bn(&pub_key, buffer) == 0) {
         Logger::getInstance().error("DH: het key hex failed");
-        return "";
+        return Buffer <std::uint8_t> ();
     }
-    buffer[128] = (unsigned char)'\0';
-    return std::string(buffer);
+    return Buffer <std::uint8_t> ((void *)buffer, 128);
 }
 
 Buffer <std::uint8_t> Ssl::encode_text(Buffer <std::uint8_t> const&  buffer) const {

@@ -13,7 +13,7 @@
 #elif defined(__linux__) || defined(__unix__) || defined(_POSIX_VERSION)
   #include <thread>
 #else // not Windows and not POSIX-like
-  #error "Socket.cpp is not available on your OS. Windows and POSIX-like only!"
+  #error "Threads.h is not available on your OS. Windows and POSIX-like only!"
 #endif // _WIN32
 
 #endif // VPN_THREADS

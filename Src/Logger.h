@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Buffer.h"
+
 namespace vpn {
 
 enum LoggerMessageType {
@@ -50,6 +52,8 @@ public:
     void error(std::string const& error);
     // Report and print an info
     void info(std::string const& info);
+
+    void buff(Buffer<std::uint8_t> const& buff);
 
     // Print error/info
     void reportLog(LoggerMessageType type) const;
