@@ -41,7 +41,7 @@ void Logger::info(std::string const& info) {
 }
 
 void Logger::buff(Buffer<std::uint8_t> const& buff) {
-    for (int i=0; i<buff.size(); ++i) {
+    for (unsigned i=0; i<buff.size(); ++i) {
         std::printf("%02x ", buff[i]);
     }
 }

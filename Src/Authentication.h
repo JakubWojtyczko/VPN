@@ -6,6 +6,8 @@
 
 namespace vpn {
 
+
+#pragma pack(push, 1)
 struct AuthenticationHeader {
     // octet 1
     std::uint8_t next_header;
@@ -16,8 +18,9 @@ struct AuthenticationHeader {
     // octet 3
     std::uint32_t seq_num;
     // authentication data
-    std::vector <std::uint32_t> auth_data;
+    std::uint8_t auth_data[12];
 };
+#pragma pack(pop)
 
 
 } // namespace vpn
