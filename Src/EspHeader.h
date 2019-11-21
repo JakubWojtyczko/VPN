@@ -6,10 +6,14 @@
 
 namespace vpn {
 
-class EspHeader {
-    std::uint_fast32_t spi; // Secutiry Parameter Index
-    std::uint_fast32_t sqn; // Sequence Number
+
+#pragma pack(push, 1)
+struct EspHeader {
+    std::uint32_t spi; // Secutiry Parameter Index
+    std::uint32_t sqn; // Sequence Number
 };
+#pragma pack(pop)
+
 
 } // namespace vpn
 

@@ -23,6 +23,10 @@ public:
         _data.push_back(element);
     }
 
+    inline void insert(Buffer const& other) {
+        this -> insert(other._data);
+    }
+
     inline void insert(const void * iter, size_t len) {
         // BEZPIECZNE TO ??
         std::copy((const T *)iter, (const T *)iter + len, std::back_inserter(_data));
@@ -46,6 +50,13 @@ public:
         size_t ret_size = (n > _data.size() ? _data.size() : n);
         Buffer <T> new_buffer(_data.data(), _data.data() + ret_size);
         this -> _data().erase(_data.begin(), _data.begin() + ret_size);
+        return new_buffer;
+    }
+
+    Buffer get_last_n(size_t n) {
+        size_t ret_size = (n > _data.size() ? _data.size() : n);
+        Buffer <T> new_buffer(_data.end() - ret_size, _data.end());
+        this -> _data().erase(_data.end() - ret_size, _data.end());
         return new_buffer;
     }
 

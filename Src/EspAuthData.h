@@ -6,9 +6,13 @@
 
 namespace vpn {
 
-class EspAuthData {
-    std::vector <std::uint8_t> data;
+
+#pragma pack(push, 1)
+struct EspAuthData {
+    std::uint8_t data[24];
 };
+#pragma pack(pop)
+
 
 } // namespace vpn
 

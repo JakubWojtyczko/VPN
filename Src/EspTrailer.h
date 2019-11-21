@@ -6,7 +6,7 @@
 
 namespace vpn {
 
-class EspTrailer {
+struct EspTrailer {
     std::vector <std::uint8_t> padding;
     std::uint8_t pad_length;
     std::uint8_t next_hreder;
