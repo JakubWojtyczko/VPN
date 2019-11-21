@@ -4,12 +4,16 @@
 #include <vector>
 #include <cinttypes>
 
+#ifndef ESP_AUTH_LEN
+#define ESP_AUTH_LEN 24
+#endif // ESP_AUTH_LEN
+
 namespace vpn {
 
 
 #pragma pack(push, 1)
 struct EspAuthData {
-    std::uint8_t data[24];
+    std::uint8_t data[ESP_AUTH_LEN];
 };
 #pragma pack(pop)
 

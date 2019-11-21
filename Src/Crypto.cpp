@@ -40,9 +40,9 @@ Buffer <std::uint8_t> Crypto::tear_down_tunnel(Buffer <std::uint8_t> tunnel) {
     if (verify_header(head) == false) {
         return data;  // empty data
     }
-    // last 12 bytes is an auth
+    // last 24 bytes is an auth
     EspAuthData auth;
-    Buffer <std::uint8_t> auth_buff = tunnel.get_last_n(12);
+    Buffer <std::uint8_t> auth_buff = tunnel.get_last_n(ESP_AUTH_LEN);
     std::memcpy(&auth, auth_buff.data(), auth_buff.size());
     // verify authenticaiton data
     if (verify_auth(auth)) {
