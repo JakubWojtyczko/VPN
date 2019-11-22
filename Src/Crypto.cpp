@@ -127,13 +127,13 @@ bool Crypto::verify_auth(EspAuthData const& auth) const {
 }
 
 
-Buffer <std::uint8_t> decode(Buffer <std::uint8_t> const& data) {
+Buffer <std::uint8_t> Crypto::decode(Buffer <std::uint8_t> const& data) {
     // TODO
     return data;
 }
 
 
-Buffer <std::uint8_t> encode(Buffer <std::uint8_t> const& data) {
+Buffer <std::uint8_t> Crypto::encode(Buffer <std::uint8_t> const& data) {
     // TODO
     return data;
 }
