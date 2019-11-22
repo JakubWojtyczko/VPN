@@ -5,7 +5,7 @@
 #include <cinttypes>
 
 #ifndef ESP_AUTH_LEN
-#define ESP_AUTH_LEN 24
+#define ESP_AUTH_LEN 32
 #endif // ESP_AUTH_LEN
 
 namespace vpn {

@@ -47,16 +47,16 @@ public:
     // return new buffer containing first n elements
     // flush returned data from itself
     Buffer get_first_n(size_t n) {
-        size_t ret_size = (n > _data.size() ? _data.size() : n);
+        size_t ret_size = std::min(_data.size(), n);
         Buffer <T> new_buffer(_data.data(), _data.data() + ret_size);
-        this -> _data().erase(_data.begin(), _data.begin() + ret_size);
+        this -> _data.erase(_data.begin(), _data.begin() + ret_size);
         return new_buffer;
     }
 
     Buffer get_last_n(size_t n) {
-        size_t ret_size = (n > _data.size() ? _data.size() : n);
-        Buffer <T> new_buffer(_data.end() - ret_size, _data.end());
-        this -> _data().erase(_data.end() - ret_size, _data.end());
+        size_t ret_size = std::min(_data.size(), n);
+        Buffer <T> new_buffer(_data.data() + _data.size() - ret_size, _data.data() + _data.size());
+        this -> _data.erase(_data.end() - ret_size, _data.end());
         return new_buffer;
     }
 
@@ -68,6 +68,10 @@ public:
 
     inline size_t size() const {
         return this -> _data.size();
+    }
+
+    inline bool empty() const {
+        return _data.empty();
     }
 
     inline void clear() {

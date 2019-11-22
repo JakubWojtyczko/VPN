@@ -9,6 +9,10 @@
 #include "EspAuthData.h"
 #include "Socket.h"
 
+#ifndef IPPROTO_IPV4
+#define IPPROTO_IPV4 4
+#endif // IPPROTO_IPV4
+
 
 namespace vpn {
 

@@ -1,7 +1,7 @@
 #include "Auth.h"
 #include "Logger.h"
 #include "Socket.h"
-
+#include "Utils.h"
 
 #include <cstring>
 #include <string>
@@ -59,14 +59,14 @@ bool Auth::calcualte_ah_icv(AuthenticationHeader & ah) const {
     }
 
     if (ah.spi != htonl(this -> oth_spi)) {
-        Logger::getInstance().error("AH: Invalid spi: " + std::to_string(ntohl(ah.spi)) + 
-            " but " +  std::to_string(this -> oth_spi) + " was expected");
+        Logger::getInstance().error("AH: Invalid spi: " + str(ntohl(ah.spi)) + 
+            " but " +  str(this -> oth_spi) + " was expected");
         return false;
     }
 
     if (htonl(ah.seq_num) != sequence) {
-        Logger::getInstance().error("AH: Invalid seq num: " + std::to_string(ntohl(ah.seq_num)) + 
-            " but " +  std::to_string(sequence) + " was expected");
+        Logger::getInstance().error("AH: Invalid seq num: " + str(ntohl(ah.seq_num)) + 
+            " but " +  str(sequence) + " was expected");
         return false;
     }
 
