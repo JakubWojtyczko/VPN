@@ -1,7 +1,8 @@
+#include "Buffer.h"
 #include "Isakmp.h"
+#include "IsakmpHeader.h"
 #include "Logger.h"
 #include "Socket.h"
-
 #include "SocketInc.h"
 
 #include <cstdlib>

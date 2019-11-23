@@ -1,13 +1,9 @@
 #ifndef VPN_CRYPTO
 #define VPN_CRYPTO
 
+
 #include <cinttypes>
 
-#include "Buffer.h"
-#include "EspHeader.h"
-#include "EspTrailer.h"
-#include "EspAuthData.h"
-#include "Socket.h"
 
 #ifndef IPPROTO_IPV4
 #define IPPROTO_IPV4 4
@@ -15,6 +11,12 @@
 
 
 namespace vpn {
+
+
+template <class T> class Buffer;
+struct EspHeader;
+struct EspTrailer;
+struct EspAuthData;
 
 
 class Crypto {

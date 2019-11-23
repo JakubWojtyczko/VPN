@@ -1,14 +1,15 @@
 #ifndef VPN_TUNNEL
 #define VPN_TUNNEL
 
-#include "Auth.h"
-#include "Buffer.h"
-#include "Crypto.h"
-
 #include <cinttypes>
 #include <queue>
 
 namespace vpn {
+
+template <class T> class Buffer;
+class Auth;
+class Crypto;
+
 
 class Tunnel {
 public:

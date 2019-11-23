@@ -1,3 +1,7 @@
+#include "Auth.h"
+#include "Authentication.h"
+#include "Buffer.h"
+#include "Crypto.h"
 #include "Tunnel.h"
 
 #include <cstring>

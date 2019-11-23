@@ -3,11 +3,11 @@
 
 #include <cinttypes>
 
-#include "Authentication.h"
-
 
 namespace vpn
 {
+
+struct AuthenticationHeader;
 
 class Auth {
 

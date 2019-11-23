@@ -5,6 +5,7 @@
 
 #include <string>
 
+
 namespace vpn {
 
 enum UserConnectionState {
@@ -26,7 +27,7 @@ public:
 
     void update_state(UserConnectionState new_state);
     inline std::string const& get_ip() const { return ip; } 
-    inline Isakmp & get_isakmp() { return isakmp; }
+    Isakmp & get_isakmp();
 
 
 private:

@@ -2,6 +2,8 @@
 #include "../Logger.h"
 #include "../SocketInc.h"
 #include "../Isakmp.h"
+#include "../IsakmpHeader.h"
+
 
 #include <string>
 #include <cstring>

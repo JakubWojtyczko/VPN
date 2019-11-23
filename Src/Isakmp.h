@@ -1,14 +1,17 @@
 #ifndef VPN_ISAKMP
 #define VPN_ISAKMP
 
-#include "IsakmpHeader.h"
-#include "Buffer.h"
 
 #include <string>
 #include <vector>
 #include <cstdlib>
 
 namespace vpn {
+
+struct IsakmpHeader;
+struct Message1_2;
+template <class T> class Buffer;
+
 
 enum IsakmpStatus {
     SUCCESS,

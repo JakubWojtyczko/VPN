@@ -1,6 +1,8 @@
 #include "Auth.h"
+#include "Authentication.h"
 #include "Logger.h"
 #include "Socket.h"
+#include "SocketInc.h"
 #include "Utils.h"
 
 #include <cstring>

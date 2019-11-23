@@ -3,9 +3,10 @@
 
 #include <string>
 
-#include "Buffer.h"
 
 namespace vpn {
+
+template <class T> class Buffer;
 
 enum LoggerMessageType {
     INFO_T,

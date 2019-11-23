@@ -1,3 +1,4 @@
+#include "Buffer.h"
 #include "Logger.h"
 
 #include <iostream>

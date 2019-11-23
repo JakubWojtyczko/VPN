@@ -1,6 +1,11 @@
+#include "Buffer.h"
 #include "Crypto.h"
+#include "EspHeader.h"
+#include "EspTrailer.h"
+#include "EspAuthData.h"
 #include "Logger.h"
 #include "Socket.h"
+#include "SocketInc.h"
 #include "Utils.h"
 
 #include <string>

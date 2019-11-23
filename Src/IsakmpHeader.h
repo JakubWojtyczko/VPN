@@ -3,6 +3,9 @@
 
 #include <cinttypes>
 
+
+namespace vpn {
+
 #pragma pack(push, 1)
 struct IsakmpHeader {
 
@@ -127,5 +130,7 @@ struct IsakmpHash {
 };
 #pragma pack(pop)
 
+
+} // namespace vpn
 
 #endif // VPN_ISAKMP_HEADER

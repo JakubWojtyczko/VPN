@@ -1,8 +1,9 @@
-#include "Socket.h"
-
 #include <string.h>
 
 #include "Logger.h"
+#include "Socket.h"
+#include "SocketInc.h"
+
 
 namespace vpn {
 

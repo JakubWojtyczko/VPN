@@ -1,8 +1,6 @@
 #ifndef VPN_SOCKET
 #define VPN_SOCKET
 
-#include "SocketInc.h"
-
 #include <string>
 #include <vector>
 
