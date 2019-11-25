@@ -1,7 +1,7 @@
 #include "ClientIsakmp.h"
-#include "../Logger.h"
-#include "../IsakmpHeader.h"
-#include "../Buffer.h"
+#include "Logger.h"
+#include "IsakmpHeader.h"
+#include "Buffer.h"
 
 
 namespace vpn {

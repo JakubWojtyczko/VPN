@@ -1,6 +1,6 @@
-#include "../Usr.h"
+#include "Usr.h"
 #include "ServerIsakmp.h"
-#include "../Threads.h"
+#include "Threads.h"
 
 #include <vector>
 #include <iostream>

@@ -1,10 +1,10 @@
 #ifndef VPN_SERVER_ISAKMP
 #define VPN_SERVER_ISAKMP
 
-#include "../Usr.h"
-#include "../Socket.h"
-#include "../Threads.h"
-#include "../Isakmp.h"
+#include "Usr.h"
+#include "Socket.h"
+#include "Threads.h"
+#include "Isakmp.h"
 
 
 #include <vector>

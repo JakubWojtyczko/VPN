@@ -6,7 +6,11 @@ SERVER=Server
 SOURCE_DIR=Src
 CPPFLAGS=-g -Wall -DW_DEBUG -std=c++17
 
+# Add libs for SSL
 LIBS=-lssl -lcrypto
+
+# Add directory with common headers
+INC = -I$(SOURCE_DIR)
 
 TARGETS=server client
 TARGETS_WIN_EXT=server.exe client.exe
@@ -59,10 +63,10 @@ $(OBJ_COMMON): $(SRC_COMMON)
 	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
 
 $(OBJ_SERVER): $(SRC_SERVER)
-	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
+	$(CXX) $(CPPFLAGS) $(INC) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
 
 $(OBJ_CLIENT): $(SRC_CLIENT)
-	$(CXX) $(CPPFLAGS) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
+	$(CXX) $(CPPFLAGS) $(INC) -c -o $@ $(subst Out/,Src/,$(subst .o,.cpp,$@))
 
 
 clean:
