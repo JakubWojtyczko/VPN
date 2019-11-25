@@ -28,11 +28,13 @@ OBJ_C = $(patsubst %.cpp,%.o,$(SRC_CLIENT))
 OBJ_CLIENT = $(subst Src/,Out/,$(OBJ_C))
 
 
-# add library for WinSockets when Windows
 ifeq ($(OS),Windows_NT)
-WIN_LIBS=-lWs2_32 -lgdi32
+	# add library for WinSockets when Windows
+	WIN_LIBS=-lWs2_32 -lgdi32
+	# ad library for iphlpapi
+	WIN_LIBS+=-liphlpapi
 else
-LFLAGS=-pthread
+	LFLAGS=-pthread
 endif
 
 
