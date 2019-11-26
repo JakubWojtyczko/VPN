@@ -4,6 +4,11 @@
 #ifndef VPN_TAP_WIN
 #define VPN_TAP_WIN
 
+#ifdef VPN_TAP_LIN
+  #warning "Tap for Linux has been detected!"
+#endif // VPN_TAP_LIN
+
+
 #include "TapAbs.h"
 
 // declare struct from <iphlpapi.h>
