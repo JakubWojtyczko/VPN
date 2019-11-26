@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <string>
 
 namespace vpn {
     
@@ -44,12 +45,13 @@ std::vector <_linux_ip_forward_tab> Tap::get_raoute_table() const {
         iss >> std::dec >> t.irtt;
         tab.push_back(t);
     }
-    Logger::getInstance().info("Read " + str(route_tab.size()) + " entries");
+    Logger::getInstance().info("Tap: Read " + str(tab.size()) + " entries");
     return tab;
 }
 
 bool Tap::store_route_table() {
     this -> route_tab = this -> get_raoute_table();
+    return !this -> route_tab.empty();
 }
 
 bool Tap::clear_route_table() const {
@@ -69,6 +71,7 @@ bool Tap::disable_tap_interface() {
     return false;
 }
 bool Tap::tap_interface_exists() const {
+    // TODO: move path to config!
     std::ifstream f("/dev/tun1234");
     return f.good();
 }
