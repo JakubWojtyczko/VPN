@@ -4,8 +4,11 @@
 #include "TapWin.h"
 #include "Logger.h"
 
-
+#include <windows.h>
 #include <iphlpapi.h>
+#include <SetupAPI.h>
+#include <devguid.h>
+
 
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
@@ -92,7 +95,6 @@ MIB_IPFORWARDTABLE * Tap::get_route_table() const {
     }
     return table;
 }
-
 
 
 
