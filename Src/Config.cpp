@@ -44,7 +44,7 @@ Config & Config::get_instance() {
 }
 
 
-std::string const& Config::operator[](std::string const& key) const {
+std::string Config::operator[](std::string const& key) const {
     for (auto const& pair : data) {
         if (key == pair.first) {
             return pair.second;

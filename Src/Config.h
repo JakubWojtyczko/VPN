@@ -15,7 +15,7 @@ public:
     static void read_config_file();
     static Config & get_instance();
 
-    std::string const& operator[](std::string const& key) const;
+    std::string operator[](std::string const& key) const;
 private:
     static Config instance;
     std::map <std::string, std::string> data;
