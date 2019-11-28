@@ -10,6 +10,7 @@
 
 #include "TapAbs.h"
 
+#include <string>
 #include <cinttypes>
 #include <vector>
 

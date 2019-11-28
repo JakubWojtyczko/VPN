@@ -1,13 +1,13 @@
 #include "ClientIsakmp.h"
+#include "Config.h"
 #include "Logger.h"
 #include "IsakmpHeader.h"
 #include "Buffer.h"
 
+#include <cstdlib>
 
 namespace vpn {
 
-
-const char * SERVER_IP = "127.0.12.1"; // TODO can't be hardcoded
 
 bool ClientIsakmp::connect_to_server() {
     // create socket, bind address and port
@@ -31,12 +31,15 @@ bool ClientIsakmp::connect_to_server() {
 
 
 bool ClientIsakmp::handshake() {
-    
+    // get server ip
+    std::string server_ip = Config::get_instance()["server_ip"];
+    // get supported ISAKMP port
+    int port = std::atoi(Config::get_instance()["isakmp_port"].c_str());
+
     // Send message 1 (initial) to the server
     Logger::getInstance().info("ClientIsakmp: sending msg1");
-
     Message1_2 msg1 = user.get_isakmp().prepare_message_1();
-    if (!cli_sock.send_to(&msg1, sizeof(msg1), 0, SERVER_IP, 500)) {
+    if (!cli_sock.send_to(&msg1, sizeof(msg1), 0, server_ip.c_str(), port)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg1: " + cli_sock.last_error_str());
         return false;
     }
@@ -48,8 +51,7 @@ bool ClientIsakmp::handshake() {
 
     Message1_2 msg2;
     std::string p_addr;
-    int p_port = 500;
-    if (!cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, p_port)) {
+    if (!cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, port)) {
         Logger::getInstance().error("Timeout while waiting for msg2: " + cli_sock.last_error_str());
         return false;
     }
@@ -67,7 +69,7 @@ bool ClientIsakmp::handshake() {
     Logger::getInstance().info("ClientIsakmp: sending msg3");
 
     Buffer<std::uint8_t> msg3 = user.get_isakmp().prepare_message_3();
-    if (!cli_sock.send_to(msg3.data(), msg3.size(), 0, SERVER_IP, Isakmp::PORT)) {
+    if (!cli_sock.send_to(msg3.data(), msg3.size(), 0, server_ip.c_str(), port)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg3: " + cli_sock.last_error_str());
         return false;
     }

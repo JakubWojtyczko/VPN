@@ -5,6 +5,7 @@
 #include "Socket.h"
 #include "Threads.h"
 #include "Isakmp.h"
+#include "Config.h"
 
 
 #include <vector>
@@ -12,18 +13,13 @@
 namespace vpn
 {
 
-#ifndef SERVER_IP
-#define SERVER_IP "127.0.12.1" // TODO can't be hardcoded !!!
-#endif
-
-
 class ServerIsakmp {
 
 public:
     ServerIsakmp(Usr & self, std::vector<vpn::Usr> & cli) :
         self(self),
         clients(cli),
-        server_sock(SERVER_IP, Isakmp::PORT, SockTransport::UDP),
+        server_sock(Config::get_instance()["server_ip"], Isakmp::PORT, SockTransport::UDP),
         is_active(true)
         {}
     std::thread start();
