@@ -3,15 +3,67 @@
 
 #include <string>
 #include <cmath>
+
+
 #include "IPv4Header.h"
 
 
 namespace vpn {
 
 
+
 enum IPVersion {
     V4,
     V6
+};
+
+
+
+
+
+template <IPVersion>
+class Route {
+    
+public:
+    Route(std::string const& addr, int prefix=0, int metric=1, std::string const& gw="") 
+        : addr(addr), prefix(prefix), metric(metric), gw(gw) {}
+    virtual ~Route() {}
+
+    inline std::string const& get_address() const {
+        return addr;
+    }
+
+    inline int get_prefix_len() const {
+        return prefix;
+    }
+
+    inline int get_metric() const {
+        return metric;
+    }
+
+    inline std::string const& get_default_gateway() {
+        return gw;
+    }
+
+private:
+
+    std::string addr;
+    int prefix;
+    int metric;
+    std::string gw;
+};
+
+
+template <IPVersion>
+class DNS {
+    DNS(std::string const& addr) : addr(addr) {}
+    virtual ~DNS() {}
+    inline std::string const& get_address() const {
+        return addr;
+    }
+
+public:
+    std::string addr;
 };
 
 
@@ -48,7 +100,15 @@ class IPCommon {
         return std::uint16_t(sum);
     }
     
+
 };
+
+
+template <IPVersion ipver> 
+bool validate_address(std::string& address) {
+    return true;
+}
+
 
 
 } // namespace vpn
