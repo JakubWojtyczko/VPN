@@ -18,10 +18,13 @@ enum IPVersion {
 };
 
 
+template <IPVersion ipver> 
+bool validate_address(std::string& address) {
+    return true;
+}
 
 
-
-template <IPVersion>
+template <IPVersion ipver>
 class Route {
     
 public:
@@ -45,6 +48,10 @@ public:
         return gw;
     }
 
+    inline bool validate() const {
+        return validate_address<ipver>(this -> addr);
+    }
+
 private:
 
     std::string addr;
@@ -54,12 +61,18 @@ private:
 };
 
 
-template <IPVersion>
+template <IPVersion ipver>
 class DNS {
+
+public:
+
     DNS(std::string const& addr) : addr(addr) {}
     virtual ~DNS() {}
     inline std::string const& get_address() const {
         return addr;
+    }
+    inline bool validate() const {
+        return validate_address<ipver>(this -> addr);
     }
 
 public:
@@ -104,10 +117,7 @@ class IPCommon {
 };
 
 
-template <IPVersion ipver> 
-bool validate_address(std::string& address) {
-    return true;
-}
+
 
 
 

@@ -38,7 +38,7 @@ public:
     bool store_route_table() override;
     bool clear_route_table() const override;
     bool restore_route_table() override;
-    bool set_up_route_table() override;
+    bool set_up_route_table(std::vector<Route<IPVersion::V4>> const& rt) override;
     
     bool enable_tap_interface() override;
     bool disable_tap_interface() override;

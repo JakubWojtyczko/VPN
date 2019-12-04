@@ -54,4 +54,15 @@ std::string Config::operator[](std::string const& key) const {
     return "";
 }
 
+
+std::vector <std::string> Config::starts_with(std::string const& prefix) const {
+    std::vector <std::string> keys;
+    for (auto const& pair : data) {
+        if (pair.first.find(prefix) == 0) {
+            keys.push_back(pair.second);
+        }
+    }
+    return keys;
+}
+
 } // namespace vpn

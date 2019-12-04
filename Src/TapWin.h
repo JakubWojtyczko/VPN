@@ -12,7 +12,8 @@
 #include "TapAbs.h"
 
 // declare struct from <iphlpapi.h>
-struct _MIB_IPFORWARDTABLE;
+#include <windows.h>
+#include <iphlpapi.h>
 
 namespace vpn {
     
@@ -28,12 +29,22 @@ public:
     bool clear_route_table() const override;
     bool restore_route_table() override;
 
+
+    // Add required by VPN rows. 
+    virtual bool set_up_route_table(std::vector<Route<IPVersion::V4>> const& rt) {}
+    // Enable a TAP interface. 
+    virtual bool enable_tap_interface() {}
+    // Disable a TAP interface.
+    virtual bool disable_tap_interface() {}
+    // True if tap interface exists, false otherwise.
+    virtual bool tap_interface_exists() const {}
+
 protected:
     // Note: Allocated memory inside !!
-    _MIB_IPFORWARDTABLE * get_route_table() const;
+    MIB_IPFORWARDTABLE * get_route_table() const;
 
 private:
-    _MIB_IPFORWARDTABLE * ip_forward_table;
+    MIB_IPFORWARDTABLE * ip_forward_table;
 };
 
 } // namespace vpn

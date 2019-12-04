@@ -1,3 +1,8 @@
+#ifdef _WINDOWS_H
+  // There are some dependency issues here
+  #warning "Please include SocketInc.h before <windows.h>"
+#endif // _WINDOWS_H
+
 #ifndef VPN_SOCKET_INC
 #define VPN_SOCKET_INC
 
