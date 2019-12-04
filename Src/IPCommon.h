@@ -19,7 +19,7 @@ enum IPVersion {
 
 
 template <IPVersion ipver> 
-bool validate_address(std::string& address) {
+bool validate_address(std::string const& address) {
     return true;
 }
 
