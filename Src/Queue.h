@@ -4,10 +4,10 @@
 #include <queue>
 #include <cinttypes>
 
+#include "Buffer.h"
 
 namespace vpn {
     
-template <class T> class Buffer;
 
 class Queue {
 

@@ -23,7 +23,7 @@ public:
 
     void stop() final;
 
-    std::uint32_t getCoreId() final;
+    std::uint32_t getCoreId();
     
 private:
     pcpp::DpdkDevice * tx_device;
