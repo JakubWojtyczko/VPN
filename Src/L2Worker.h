@@ -6,14 +6,16 @@
 #include <pcpp/DpdkDevice.h>
 #include <pcpp/DpdkDeviceList.h>
 
+#include "Queue.h"
+
 
 namespace vpn {
     
 class L2Worker : public pcpp::DpdkWorkerThread {
 
 public:
-    L2Worker(pcpp::DpdkDevice * tx_device, pcpp::DpdkDevice * rx_device) :
-        tx_device(tx_device), rx_device(rx_device), is_active(true) {}
+    L2Worker(pcpp::DpdkDevice * tx_device, pcpp::DpdkDevice * rx_device, Queue & tx, Queue & rx) :
+        tx_device(tx_device), rx_device(rx_device), is_active(true), tx(tx), rx(rx) {}
 
     virtual ~L2Worker() {}
 
@@ -27,6 +29,9 @@ private:
     pcpp::DpdkDevice * tx_device;
     pcpp::DpdkDevice * rx_device;
     bool is_active;
+    Queue & tx;
+    Queue & rx;
+
     std::uint32_t core_id;
 
 protected:

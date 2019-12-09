@@ -14,5 +14,26 @@ Isakmp & Usr::get_isakmp() {
 }
 
 
+Queue & Usr::get_from_phy_queue() {
+    return this -> from_phy;
+}
+
+
+Queue & Usr::get_to_phy_queue() {
+    return this -> to_phy;
+}
+
+
+Queue & Usr::get_from_tap_queue() {
+    return this -> from_tap;
+}
+
+
+Queue & Usr::get_to_tap_queue() {
+    return this -> to_tap;
+}
+
+
+
 } // namespace vpn
 

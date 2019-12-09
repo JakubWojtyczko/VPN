@@ -26,7 +26,7 @@ bool L2Worker::run(std::uint32_t core_id) {
 }
 
 void L2Worker::insert_into_queue(pcpp::MBufRawPacket ** packets, std::uint16_t n) {
-
+    
 }
 
 

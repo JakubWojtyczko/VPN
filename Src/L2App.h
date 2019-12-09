@@ -6,6 +6,8 @@
 
 #include <vector>
 
+#include "Usr.h"
+
 #define MBUF_POOL_SIZE 16*1024-1
 #define DEVICE_ID_1 0
 #define DEVICE_ID_2 1
@@ -17,7 +19,7 @@ class L2App {
 
 public:
 
-    L2App() : tap(nullptr), phy(nullptr), workers_core_mask(0) {}
+    L2App(Usr & self) : usr(self), tap(nullptr), phy(nullptr), workers_core_mask(0) {}
     virtual ~L2App() {}
     bool setup();
     bool start_capture_asyns();
@@ -31,7 +33,7 @@ protected:
     void create_core_mask();
 
 private:
-
+    Usr & usr;
     pcpp::DpdkDevice * tap;
     pcpp::DpdkDevice * phy;
     // workers[0] = tap device -> phy device

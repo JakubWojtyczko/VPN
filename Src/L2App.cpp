@@ -76,9 +76,9 @@ bool L2App::open_dpdk_devices() {
 
 void L2App::create_workers() {
     // tap device -> phy device
-    workers.push_back(new L2Worker(tap, phy));
+    workers.push_back(new L2Worker(tap, phy, usr.get_to_phy_queue(), usr.get_from_tap_queue()));
     // phy device -> tap device
-    workers.push_back(new L2Worker(phy, tap));
+    workers.push_back(new L2Worker(phy, tap, usr.get_to_tap_queue(), usr.get_from_phy_queue()));
 }
 
 
