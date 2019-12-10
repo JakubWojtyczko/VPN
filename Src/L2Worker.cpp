@@ -1,3 +1,4 @@
+#if 0
 #include "L2Worker.h"
 
 
@@ -44,3 +45,4 @@ std::uint32_t L2Worker::getCoreId() {
 }
 
 } // namespace vpn
+#endif // 0

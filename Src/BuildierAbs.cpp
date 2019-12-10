@@ -35,6 +35,7 @@ bool BuilderAbs::prepare_tap() {
     if (tap.set_up_route_table(this -> route) == false) {
         return false;
     }
+    return true;
 }
 
 

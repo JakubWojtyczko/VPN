@@ -1,3 +1,4 @@
+#if 0
 #ifndef VPN_L2_WORKER
 #define VPN_L2_WORKER
 
@@ -46,3 +47,4 @@ protected:
 
 
 #endif // VPN_L2_WORKER
+#endif // 0

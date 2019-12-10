@@ -60,7 +60,7 @@ bool Tap::clear_route_table() const {
 bool Tap::restore_route_table() {
     return false;
 }
-bool Tap::set_up_route_table() {
+bool Tap::set_up_route_table(std::vector<Route<IPVersion::V4>> const& rt) {
     return false;
 }
     

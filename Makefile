@@ -35,6 +35,7 @@ ifeq ($(OS),Windows_NT)
 	WIN_LIBS+=-liphlpapi
 else
 	LFLAGS=-pthread
+	LIBS+=-lpcap
 endif
 
 
