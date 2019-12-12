@@ -31,13 +31,13 @@ public:
 
 
     // Add required by VPN rows. 
-    virtual bool set_up_route_table(std::vector<Route<IPVersion::V4>> const& rt) {}
+    virtual bool set_up_route_table(std::vector<Route<IPVersion::V4>> const& rt) {return true;}
     // Enable a TAP interface. 
-    virtual bool enable_tap_interface() {}
+    virtual bool enable_tap_interface() {return true;}
     // Disable a TAP interface.
-    virtual bool disable_tap_interface() {}
+    virtual bool disable_tap_interface() {return true;}
     // True if tap interface exists, false otherwise.
-    virtual bool tap_interface_exists() const {}
+    virtual bool tap_interface_exists() const {return true;}
 
 protected:
     // Note: Allocated memory inside !!

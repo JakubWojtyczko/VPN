@@ -31,8 +31,10 @@ OBJ_CLIENT = $(subst Src/,Out/,$(OBJ_C))
 ifeq ($(OS),Windows_NT)
 	# add library for WinSockets when Windows
 	WIN_LIBS=-lWs2_32 -lgdi32
-	# ad library for iphlpapi
+	# add library for iphlpapi
 	WIN_LIBS+=-liphlpapi
+	# add Library for packet capturing
+	WIN_LIBS+=-lwpcap
 else
 	LFLAGS=-pthread
 	LIBS+=-lpcap

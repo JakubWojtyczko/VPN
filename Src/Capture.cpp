@@ -59,7 +59,27 @@ Buffer<std::uint8_t> Capture::receive() {
 
 char * Capture::find_default_device() const {
     char error_buffer[PCAP_ERRBUF_SIZE];
-    char * device = pcap_lookupdev(error_buffer);
+    char * device;
+#ifdef _WIN32
+    pcap_if_t * devs = nullptr;
+    if (pcap_findalldevs(&devs, error_buffer) == 0) {
+        // find first connected wireless type interface
+        for (pcap_if_t * i = devs; i; i = i -> next) {
+            // check connection
+            if (i -> flags & PCAP_IF_CONNECTION_STATUS_CONNECTED ) {
+                // check type
+                if (i -> flags & PCAP_IF_WIRELESS) {
+                    device = new char [strlen(i -> name) + 1];
+                    sprintf(device, "%s", i -> name);
+                    break;
+                }
+            }
+        }
+        pcap_freealldevs(devs);
+    }
+#else // linux
+    device = pcap_lookupdev(error_buffer);
+#endif // _WIN32
     if (device == nullptr) {
         Logger::getInstance().error(std::string("cannot find default device: ") 
             + std::string(error_buffer));
