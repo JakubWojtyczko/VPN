@@ -20,6 +20,7 @@ public:
     bool set_up();
 
     Buffer<std::uint8_t> receive();
+    void send(Buffer<std::uint8_t> const& buffer);
 
 protected:
 

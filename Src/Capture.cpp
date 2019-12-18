@@ -57,6 +57,13 @@ Buffer<std::uint8_t> Capture::receive() {
 }
 
 
+void Capture::send(Buffer<std::uint8_t> const& buffer) {
+    if (pcap_inject(handle, buffer.data(), buffer.size()) < 0) {
+        Logger::getInstance().error("Capture send failed");
+    }
+}
+
+
 char * Capture::find_default_device() const {
     char error_buffer[PCAP_ERRBUF_SIZE];
     char * device;
