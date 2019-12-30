@@ -1,9 +1,13 @@
 #include "Usr.h"
 #include "ClientIsakmp.h"
 #include "Config.h"
+#include "Utils.h"
 
+#include <csignal>
 #include <iostream>
 
+
+bool halt = false;
 
 int main() {
     // Read config from file
@@ -13,13 +17,18 @@ int main() {
     vpn::ClientIsakmp isakmp(self);
 
     if (isakmp.connect_to_server() == false) {
-        exit(1);
+        vpn::exit_with_error("Cannot connect to the server");
     }
 
     std::thread isakmp_thread = isakmp.start();
 
-    std::string str;
-    std::cin >> str;
+    // Handle Ctrl+C event
+    std::signal(SIGINT, 
+        [](int s) -> void {vpn::user_message("\nHalted by user"); halt=true;}
+    );
+
+    while(halt == false);
+
     isakmp.close();
     isakmp_thread.join();
 

@@ -2,6 +2,7 @@
 #define VPN_CLIENT_ISAKMP
 
 #include "Usr.h"
+#include "Config.h"
 #include "Socket.h"
 #include "Isakmp.h"
 #include "Threads.h"
@@ -20,7 +21,7 @@ class ClientIsakmp {
 public:
     ClientIsakmp(Usr & user) : 
         user(user), 
-        cli_sock("127.0.0.1", Isakmp::PORT, SockTransport::UDP),
+        cli_sock(Config::get_instance()["client_ip"], Isakmp::PORT, SockTransport::UDP),
         is_active(true)
         {}
     virtual ~ClientIsakmp() {}

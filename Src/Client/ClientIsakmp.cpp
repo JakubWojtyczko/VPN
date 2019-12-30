@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "IsakmpHeader.h"
 #include "Buffer.h"
+#include "Utils.h"
 
 #include <cstdlib>
 
@@ -51,8 +52,9 @@ bool ClientIsakmp::handshake() {
 
     Message1_2 msg2;
     std::string p_addr;
-    if (!cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, port)) {
+    if (cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, port) < 0) {
         Logger::getInstance().error("Timeout while waiting for msg2: " + cli_sock.last_error_str());
+        user_message("Server unavailable");
         return false;
     }
 

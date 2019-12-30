@@ -2,9 +2,13 @@
 #include "ServerIsakmp.h"
 #include "Threads.h"
 #include "Config.h"
+#include "Utils.h"
 
 #include <vector>
 #include <iostream>
+#include <csignal>
+
+bool halt = false;
 
 int main(int argc, char * argv[]) {
     // Read config from file
@@ -17,8 +21,12 @@ int main(int argc, char * argv[]) {
     // run ISAKMP in the background
     std::thread isakmp_thread = isakmp.start();
 
-    std::string s;
-    std::cin >> s;
+    // Handle Ctrl+C event
+    std::signal(SIGINT, 
+        [](int s) -> void {vpn::user_message("\nHalted by user"); halt=true;}
+    );
+
+    while (halt == false);
 
     isakmp.shut_down();
     isakmp.close_server();
