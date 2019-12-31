@@ -58,10 +58,10 @@ std::string & Logger::operator[](LoggerMessageType type) {
 void Logger::reportLog(LoggerMessageType type) const {
     switch (type) {
         case ERROR_T:
-        std::cout << "ERROR: " << this -> last_error_log << '\n';
+        std::cout << "DEBUG ERROR: " << this -> last_error_log << '\n';
         break;
         case INFO_T:
-        std::cout << "INFO: " << this -> last_info_log << '\n';
+        std::cout << "DEBUG INFO: " << this -> last_info_log << '\n';
         break;
     }
 }

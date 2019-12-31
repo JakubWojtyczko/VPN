@@ -66,11 +66,16 @@ bool Socket::create_socket() {
     }
     if (check_result(new_socket)) {
         this -> fd = new_socket;
-        return true;
     } else {
         Logger::getInstance().error("Cannot create socet: " + last_error_str());
         return false;
     } 
+    // socket can be reused in the future
+    int tmp = 1;
+    if (!check_result(setsockopt(this -> fd, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(int)))) {
+        Logger::getInstance().error("Socket: Reuse option failed");
+    }
+    return true;
 }
 
 bool Socket::bind_socket() const{
@@ -142,7 +147,7 @@ int Socket::recv_from(const void * buff, size_t len, int flags, std::string & ad
     socklen_t address_len = sizeof(destination);
     int ret = recvfrom(fd, (char *)buff, len, flags, (sockaddr *)&destination, &address_len);
     if (!check_result(ret)) {
-        Logger::getInstance().error("Socket: recvfrom failed: " + last_error_str());
+        // Resource temporary unavailable
         return -1;
     }
     addr = inet_ntoa(destination.sin_addr);

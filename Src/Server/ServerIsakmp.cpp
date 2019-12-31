@@ -41,7 +41,7 @@ bool ServerIsakmp::listen_and_handle() {
     const int MAX_UDP_LEN = 2250;
     char buffer[MAX_UDP_LEN];
     while (this -> is_active) {
-        int rec_len = server_sock.recv_from(buffer, MAX_UDP_LEN, 0, p_addr, p_port);
+        int rec_len = server_sock.recv_from(buffer, MAX_UDP_LEN, MSG_DONTWAIT, p_addr, p_port);
         if(rec_len > 0) {
             Logger::getInstance().info("ServerIsakmp: reveived " + std::to_string(rec_len)
                 + " bytes from " + p_addr + ":" + std::to_string(p_port));
@@ -54,7 +54,8 @@ bool ServerIsakmp::listen_and_handle() {
             }
             handle(p_addr, buffer, rec_len);
       } else {
-          Logger::getInstance().info("ServerIsakmp: listen - zero data reveived");
+          // zero bytes received
+          continue;
       }
     }
     return true;
