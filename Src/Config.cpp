@@ -32,10 +32,14 @@ void Config::read_config_file() {
     } catch (...) {
         exit_with_error("FATAL ERROR: Config file is invalid!");
     }
-    Logger::getInstance().info("Config: Read " + str(instance.data.size()) + " enteries:");
+#ifdef W_DEBUG
+    std::string str = "Config: Read enteries: {";
     for (auto const& pair: instance.data) {
-        Logger::getInstance().info(pair.first + ": " + pair.second);
+       str += pair.first + ": " + pair.second + ", ";
     }
+    str += "}";
+    Logger::getInstance().info(str);
+#endif // W_DEBUG
 }
 
 

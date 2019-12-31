@@ -109,6 +109,7 @@ void ServerIsakmp::close_server() {
     Logger::getInstance().info("ServerIsakmp: closing connetion...");
     server_sock.close_socket();
     Logger::getInstance().info("ServerIsakmp: connetion closed");
+    this -> shut_down();
 }
 
 

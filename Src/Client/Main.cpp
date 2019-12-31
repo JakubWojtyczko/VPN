@@ -13,7 +13,7 @@ int main() {
     // Read config from file
     // Note - method below can exit the program
     vpn::Config::read_config_file();
-    vpn::Usr self(vpn::Config::get_instance()["client-ip"]);
+    vpn::Usr self(vpn::Config::get_instance()["client_ip"]);
     vpn::ClientIsakmp isakmp(self);
 
     if (isakmp.connect_to_server() == false) {
