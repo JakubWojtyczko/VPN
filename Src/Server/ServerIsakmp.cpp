@@ -3,7 +3,7 @@
 #include "SocketInc.h"
 #include "Isakmp.h"
 #include "IsakmpHeader.h"
-
+#include "Utils.h"
 
 #include <string>
 #include <cstring>
@@ -96,10 +96,34 @@ void ServerIsakmp::handle_new(std::string const& ip, char * buf, int len) {
 
 void ServerIsakmp::handle_exist(std::string const& ip, char * buf, int len) {
     if (is_client_added(ip) == false) {
-       
-    }
+        int payload = (int)(buf[16]);
+        if (payload == 12) {
+            // delete request
+            if (len != sizeof(IsakmpDeleteReq)) {
+                Logger::getInstance().error("ServerIsakmp delete req too short");
+                return;
+            }
+            IsakmpDeleteReq req;
+            std::memcpy(&req, buf, len);
+            int cli_idx = find_by_spi(req.head.init_spi);
+            if (cli_idx == -1) {
+                Logger::getInstance().error("ServerIsakmp:handle_exist - Unknown spi: " + str(req.head.init_spi));
+                return;
+            }
+            user_message(std::string("Deleted user with ip ") + clients[cli_idx].get_ip());
+            clients.erase(clients.begin() + cli_idx);
+        }
+    } 
 }
 
+int ServerIsakmp::find_by_spi(std::uint64_t spi) const {
+    for (int i=0; i<(int)clients.size(); ++i) {
+        if (clients[i].get_isakmp().get_spi() == spi) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 void ServerIsakmp::shut_down() {
     this -> is_active = false;

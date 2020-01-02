@@ -131,6 +131,25 @@ struct IsakmpHash {
 #pragma pack(pop)
 
 
+#pragma pack(push, 1)
+struct IsakmpDeleteReq {
+    IsakmpHeader head;
+
+    std::uint8_t next;
+    std::uint8_t reserved;
+    std::uint16_t len;
+
+    std::uint32_t doi; // domian of interpretation
+
+    std::uint8_t proto_id;
+    std::uint8_t spi_size;
+    std::uint16_t of_spi; // number of spis to delete
+
+    std::uint64_t spi;
+};
+#pragma pack(pop)
+
+
 } // namespace vpn
 
 #endif // VPN_ISAKMP_HEADER

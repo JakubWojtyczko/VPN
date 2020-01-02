@@ -29,7 +29,7 @@ public:
     std::thread start();
     void close();
     bool connect_to_server();
-
+    bool disconnect();
 protected:
 
     bool prepare_connection_for_isakmp();

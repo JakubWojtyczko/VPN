@@ -9,6 +9,7 @@
 namespace vpn {
 
 struct IsakmpHeader;
+struct IsakmpDeleteReq;
 struct Message1_2;
 template <class T> class Buffer;
 
@@ -60,7 +61,14 @@ public:
     Buffer<std::uint8_t> prepare_message_3() const;
     bool verify_message_3(IsakmpHeader const& head, std::vector<std::uint8_t> const& content) const;
 
-  const static int PORT;
+    // delete
+    IsakmpHeader prepare_header_for_delete_req() const;
+    IsakmpDeleteReq prepare_delete_req() const;
+    IsakmpStatus verify_delete_request();
+
+    std::uint64_t get_spi() const;
+
+    const static int PORT;
 
 protected:
     void prepare_key(std::uint8_t key[128], std::string const& key_hex) const;

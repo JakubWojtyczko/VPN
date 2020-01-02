@@ -93,6 +93,7 @@ void ClientIsakmp::listen() {
 }
 
 void ClientIsakmp::close() {
+    this -> disconnect();
     this -> is_active = false;
 }
 
@@ -104,6 +105,20 @@ bool ClientIsakmp::prepare_connection_for_isakmp() {
     Logger::getInstance().info("ClientIsakmp: binding socket");
     if (!cli_sock.bind_socket()) {
         cli_sock.close_socket();
+        return false;
+    }
+    return true;
+}
+
+
+bool ClientIsakmp::disconnect() {
+    // send delete request
+    IsakmpDeleteReq d_req = user.get_isakmp().prepare_delete_req();
+    Buffer<std::uint8_t> req(&d_req, sizeof(d_req));
+    int port = std::atoi(Config::get_instance()["isakmp_port"].c_str());
+    std::string server_ip = Config::get_instance()["server_ip"];
+    if (!cli_sock.send_to(req.data(), req.size(), 0, server_ip.c_str(), port)) {
+        Logger::getInstance().error("Client Isakmp: cannot send delete req: " + cli_sock.last_error_str());
         return false;
     }
     return true;

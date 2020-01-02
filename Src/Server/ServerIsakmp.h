@@ -37,7 +37,7 @@ protected:
     void handle_exist(std::string const& ip, char * buf, int len);
 
     int is_client_added(std::string const& ip) const;
-
+    int find_by_spi(std::uint64_t spi) const;
 private:
     Usr & self;
     std::vector<vpn::Usr> & clients;

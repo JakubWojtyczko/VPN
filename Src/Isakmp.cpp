@@ -330,6 +330,58 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
     return IsakmpStatus::SUCCESS;
 }
 
+IsakmpHeader Isakmp::prepare_header_for_delete_req() const {
+    IsakmpHeader head;
+    // initiator spi
+    head.init_spi = this -> source_spi;
+    // responder spi must be 0 for msg1
+    head.resp_spi = this -> dest_spi;
+    // first payload - delete (12)
+    head.next_payload = 12;
+    // verision 1.0 (0001 0000)
+    head.version = 0x10;
+    // exchange type - Aggresive mode (4)
+    head.exchange_type = 4;
+    // no flags for delete request
+    head.flags = 0;
+    // Message ID = 0
+    head.message_id = Socket::htnl(0);
+    head.length = Socket::htnl(sizeof(IsakmpDeleteReq));
+    return head;
+}
+
+
+IsakmpDeleteReq Isakmp::prepare_delete_req() const {
+    IsakmpDeleteReq req;
+    req.head = prepare_header_for_delete_req();
+    // no next payload
+    req.next = 0;
+    req.reserved = 0;
+    // len of payload
+    req.len = htons(sizeof(req) - sizeof(req.len));
+    // DOI = 0 for ISAKMP
+    req.doi = 0;
+    // IPSec
+    req.proto_id = 1;
+    // SPI size = 4 octets
+    req.spi_size = 4;
+    // 1 spi only
+    req.of_spi = htons(1);
+    // our spi to delete
+    req.spi = htonl(this -> source_spi);
+    return req;
+}
+
+
+IsakmpStatus Isakmp::verify_delete_request() {
+
+}
+
+std::uint64_t Isakmp::get_spi() const {
+    return dest_spi;
+}
+
+
 void Isakmp::prepare_key(std::uint8_t key[128], std::string const& key_hex) const {
 
 }
