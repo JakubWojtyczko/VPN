@@ -20,10 +20,10 @@ enum UserConnectionState {
 class Usr {
 
 public:
-    Usr(std::string const& ip) : 
+    Usr(std::string const& ip, std::uint64_t spi=0) : 
         state(UserConnectionState::DISCONNECTED),
         ip(ip),
-        isakmp(ip) {}
+        isakmp(ip, spi) {}
     virtual ~Usr() {}
 
     void update_state(UserConnectionState new_state);

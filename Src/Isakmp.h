@@ -45,7 +45,7 @@ class Isakmp {
 
 public:
     // for responder ip - its own ip, for initiator ip=0
-    Isakmp(std::string const& ip_address) : ip(ip_address), source_spi(std::rand() / 2 + 100), mess_id(0) {}
+    Isakmp(std::string const& ip_address, std::uint64_t spi=0) : ip(ip_address), source_spi(spi), mess_id(0) {}
     
     void prepare_security_context(Message1_2 & msg) const;
 
@@ -53,8 +53,8 @@ public:
     Message1_2 prepare_message_1() const;
     IsakmpStatus verify_message_1(Message1_2 const& msg1);
 
-    IsakmpHeader prepare_header_for_message2() const;
-    Message1_2 prepare_message_2() const;
+    IsakmpHeader prepare_header_for_message2();
+    Message1_2 prepare_message_2();
     IsakmpStatus verify_message_2(Message1_2 const& msg2);
 
     IsakmpHeader prepare_header_for_message3() const;
@@ -67,12 +67,12 @@ public:
     IsakmpStatus verify_delete_request();
 
     std::uint64_t get_spi() const;
-
+    std::uint64_t get_next_spi(bool set=false);
     const static int PORT;
 
 protected:
     void prepare_key(std::uint8_t key[128], std::string const& key_hex) const;
-
+    
 private:
     std::string our_public_key_hex;
     std::string rec_public_key_hex;
@@ -88,6 +88,8 @@ private:
     std::uint32_t mess_id;
 
     std::uint32_t certificate_expiration;
+
+    static std::uint64_t next_spi;
 };
 
 

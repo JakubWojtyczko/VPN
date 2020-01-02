@@ -65,7 +65,6 @@ bool ServerIsakmp::listen_and_handle() {
 void ServerIsakmp::handle(std::string const& ip, char * buf, int len) {
     Logger::getInstance().info("ServerIsakmp::handle");
     if (is_client_added(ip) == -1) {
-        Logger::getInstance().info("New client: " + ip);
         handle_new(ip, buf, len);
     } else {
         handle_exist(ip, buf, len);
@@ -79,7 +78,8 @@ void ServerIsakmp::handle_new(std::string const& ip, char * buf, int len) {
             + " but " + std::to_string(sizeof(Message1_2)) + " was expected");
             return;
     }
-    clients.push_back(Usr(ip));
+    clients.push_back(Usr(ip, self.get_isakmp().get_spi()));
+    user_message("New client: " + ip);
     Message1_2 msg1;
     std::memcpy(&msg1, buf, len);
     if (clients.back().get_isakmp().verify_message_1(msg1) != SUCCESS) {

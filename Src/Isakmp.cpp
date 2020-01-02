@@ -13,6 +13,8 @@ namespace vpn {
 
 // following port is reserved for that protocol.
 const int Isakmp::PORT = 500;
+std::uint64_t Isakmp::next_spi = 0xABC;
+
 
 void Isakmp::prepare_security_context(Message1_2 & msg) const {
     // SecurityAssociation
@@ -78,9 +80,8 @@ void Isakmp::prepare_security_context(Message1_2 & msg) const {
 
 IsakmpHeader Isakmp::prepare_header_for_message1() const {
     IsakmpHeader head;
-    // initiator spi is a random number
-    head.init_spi = this -> source_spi;
-    // responder spi must be 0 for msg1
+    // spi is equal 0
+    head.init_spi = 0;
     head.resp_spi = 0;
     // first payload - security association (1)
     head.next_payload = 1;
@@ -107,9 +108,7 @@ Message1_2 Isakmp::prepare_message_1() const {
 IsakmpStatus Isakmp::verify_message_1(Message1_2 const& msg) {
     // verify header
     if (msg.head.init_spi) {
-        dest_spi = msg.head.init_spi;
-    } else {
-        Logger::getInstance().error("TSAKMP: init spi must be != 0 for message 1");
+        Logger::getInstance().error("TSAKMP: init spi must be = 0 for message 1");
         return INVALID_SPI;
     }
     if (msg.head.resp_spi) {
@@ -180,11 +179,12 @@ IsakmpStatus Isakmp::verify_message_1(Message1_2 const& msg) {
     return IsakmpStatus::SUCCESS;
 }
 
-IsakmpHeader Isakmp::prepare_header_for_message2() const {
+IsakmpHeader Isakmp::prepare_header_for_message2() {
     IsakmpHeader head;
-    // initiator spi is copied from received header
+    // generate new SPI for new client and store it
+    this -> dest_spi = get_next_spi();
     head.init_spi = this -> dest_spi;
-    // responder spi is a random number in msg2
+    // spi of the server
     head.resp_spi = this -> source_spi;
     // first payload - security association (1)
     head.next_payload = 1;
@@ -200,7 +200,7 @@ IsakmpHeader Isakmp::prepare_header_for_message2() const {
     return head;
 }
 
-Message1_2 Isakmp::prepare_message_2() const {
+Message1_2 Isakmp::prepare_message_2() {
     Message1_2 msg;
     msg.head = prepare_header_for_message2();
     prepare_security_context(msg);
@@ -262,7 +262,9 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
         Logger::getInstance().error("TSAKMP: resp spi must be != 0 for message 2");
         return INVALID_SPI;
     }
-    if (msg.head.init_spi != source_spi) {
+    if (msg.head.init_spi) {
+        source_spi = msg.head.init_spi;
+    } else {
         Logger::getInstance().error("TSAKMP: msg2 - invalid init spi");
         return INVALID_SPI;
     }
@@ -384,6 +386,14 @@ std::uint64_t Isakmp::get_spi() const {
 
 void Isakmp::prepare_key(std::uint8_t key[128], std::string const& key_hex) const {
 
+}
+
+std::uint64_t Isakmp::get_next_spi(bool set) {
+    Isakmp::next_spi++;
+    if (set) {
+        this -> source_spi = Isakmp::next_spi - 1;
+    }
+    return Isakmp::next_spi - 1;
 }
 
 } // namespace vpn

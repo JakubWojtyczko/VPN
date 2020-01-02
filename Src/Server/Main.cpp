@@ -15,6 +15,8 @@ int main(int argc, char * argv[]) {
     // Note - method below can exit the program
     vpn::Config::read_config_file();
     vpn::Usr self(vpn::Config::get_instance()["server_ip"]);
+    // generate SPI for server
+    self.get_isakmp().get_next_spi(true);
     std::vector<vpn::Usr> clients;
     vpn::ServerIsakmp isakmp(self, clients);
 
