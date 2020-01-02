@@ -7,6 +7,12 @@
 
 namespace vpn {
 
+#ifdef _WIN32
+  using s_optval_type = char;
+#else // Linux
+  using s_optval_type = int;
+#endif // _WIN32
+
 
 int Socket::_sock_init() const {
 #ifdef _WIN32
@@ -70,9 +76,9 @@ bool Socket::create_socket() {
         Logger::getInstance().error("Cannot create socet: " + last_error_str());
         return false;
     } 
-    // socket can be reused in the future
-    int tmp = 1;
-    if (!check_result(setsockopt(this -> fd, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(int)))) {
+    // address can be reused in the future
+    s_optval_type optval = 1;
+    if (!check_result(setsockopt(this -> fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)))) {
         Logger::getInstance().error("Socket: Reuse option failed");
     }
     return true;
@@ -91,7 +97,7 @@ bool Socket::bind_socket() const{
     return true;
 }
 
-bool Socket::set_timeot(int sec, int usec) const {
+bool Socket::set_timeout(int sec, int usec) const {
     timeval tv;
     tv.tv_sec = sec;
     tv.tv_usec = usec;

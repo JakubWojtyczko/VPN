@@ -24,7 +24,7 @@ public:
 
     bool create_socket();
     bool bind_socket() const;
-    bool set_timeot(int sec, int usec) const;
+    bool set_timeout(int sec, int usec) const;
 
     bool send_msg(std::vector<char> const& v, int flags=0) const;
     bool send_to(const void * buff, size_t len, int flags, const char * addr, int port) const;

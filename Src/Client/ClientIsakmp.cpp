@@ -18,8 +18,7 @@ bool ClientIsakmp::connect_to_server() {
         Logger::getInstance().error("ClientIsakmp: cannot prepare connetion");
         return false;
     }
-    // set timout 5 s 100 [ms] 
-    cli_sock.set_timeot(5, 10000); // 0 sec, 10000 usec
+    cli_sock.set_timeout(5, 0); // 5 sec
 
     Logger::getInstance().info("ClientIsakmp - handshake begin");
     if (!handshake()) {
@@ -41,7 +40,7 @@ bool ClientIsakmp::handshake() {
     // Send message 1 (initial) to the server
     Logger::getInstance().info("ClientIsakmp: sending msg1");
     Message1_2 msg1 = user.get_isakmp().prepare_message_1();
-    if (!cli_sock.send_to(&msg1, sizeof(msg1), MSG_WAITALL, server_ip.c_str(), port)) {
+    if (!cli_sock.send_to(&msg1, sizeof(msg1), 0, server_ip.c_str(), port)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg1: " + cli_sock.last_error_str());
         return false;
     }

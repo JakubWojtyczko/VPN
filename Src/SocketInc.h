@@ -12,6 +12,11 @@
   #endif // _WIN32_WINNT
   #include <winsock2.h>
   #include <Ws2tcpip.h>
+  
+  #ifndef MSG_DONTWAIT
+    #define MSG_DONTWAIT 0
+  #endif // MSG_DONTWAIT
+
 #elif defined(__linux__) || defined(__unix__) || defined(_POSIX_VERSION)
   #include <sys/socket.h>
   #include <sys/time.h>
