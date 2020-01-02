@@ -4,7 +4,7 @@ CLIENT=Client
 SERVER=Server
 
 SOURCE_DIR=Src
-CPPFLAGS=-g -Wall -DW_DEBUG -std=c++17
+CPPFLAGS=-g -Wall -DDEBUG -std=c++17
 
 # Add libs for SSL
 LIBS=-lssl -lcrypto

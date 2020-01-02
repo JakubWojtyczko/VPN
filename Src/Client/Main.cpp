@@ -24,13 +24,16 @@ int main() {
 
     // Handle Ctrl+C event
     std::signal(SIGINT, 
-        [](int s) -> void {vpn::user_message("\nHalted by user"); halt=true;}
+        [] (int s) -> void {
+            vpn::user_message("\n** Halted by user **"); 
+            halt=true;
+        }
     );
 
     while(halt == false);
 
     isakmp.close();
     isakmp_thread.join();
-
+    vpn::user_message("Disconnected successfully");
     return 0;
 }

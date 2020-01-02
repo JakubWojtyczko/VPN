@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <csignal>
+#include <sstream>
 
 bool halt = false;
 
@@ -22,10 +23,13 @@ int main(int argc, char * argv[]) {
 
     // run ISAKMP in the background
     std::thread isakmp_thread = isakmp.start();
+    vpn::user_message("Server is running.");
 
     // Handle Ctrl+C event
     std::signal(SIGINT, 
-        [](int s) -> void {vpn::user_message("\nHalted by user"); halt=true;}
+        [] (int s) -> void {
+            vpn::user_message("\n** Halted by user **"); 
+            halt = true;}
     );
 
     while (halt == false);
@@ -34,7 +38,6 @@ int main(int argc, char * argv[]) {
     isakmp.shut_down();
     isakmp.close_server();
     isakmp_thread.join();
-
+    vpn::user_message("Server shut down successfully");
     return 0;
-
 }
