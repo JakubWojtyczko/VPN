@@ -18,8 +18,8 @@ bool ClientIsakmp::connect_to_server() {
         Logger::getInstance().error("ClientIsakmp: cannot prepare connetion");
         return false;
     }
-    // set timout 100 [ms] 
-    cli_sock.set_timeot(0, 10000); // 0 sec, 10000 usec
+    // set timout 5 s 100 [ms] 
+    cli_sock.set_timeot(5, 10000); // 0 sec, 10000 usec
 
     Logger::getInstance().info("ClientIsakmp - handshake begin");
     if (!handshake()) {
@@ -41,7 +41,7 @@ bool ClientIsakmp::handshake() {
     // Send message 1 (initial) to the server
     Logger::getInstance().info("ClientIsakmp: sending msg1");
     Message1_2 msg1 = user.get_isakmp().prepare_message_1();
-    if (!cli_sock.send_to(&msg1, sizeof(msg1), 0, server_ip.c_str(), port)) {
+    if (!cli_sock.send_to(&msg1, sizeof(msg1), MSG_WAITALL, server_ip.c_str(), port)) {
         Logger::getInstance().error("Client Isakmp: cannot send msg1: " + cli_sock.last_error_str());
         return false;
     }
@@ -50,12 +50,11 @@ bool ClientIsakmp::handshake() {
 
     // Receive message 2 (response) from the server
     Logger::getInstance().info("ClientIsakmp: waiting for msg2");
-
+    user_message("Waiting for server response...");
     Message1_2 msg2;
     std::string p_addr;
     if (cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, port) < 0) {
-        Logger::getInstance().error("Timeout while waiting for msg2: " + cli_sock.last_error_str());
-        user_message("Server unavailable");
+        user_message("Response timeoud out. Server unavailable");
         return false;
     }
 
