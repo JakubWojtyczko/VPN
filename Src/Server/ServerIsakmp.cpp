@@ -147,5 +147,16 @@ int ServerIsakmp::is_client_added(std::string const& ip) const {
     return -1;
 }
 
+void ServerIsakmp::disconnect_all_users() {
+    user_message("Disconnecting all users...");
+    for (auto & client : clients) {
+        IsakmpDeleteReq req = client.get_isakmp().prepare_delete_req();
+        int ret = server_sock.send_to(&req, sizeof(req), 0, client.get_ip().c_str(), Isakmp::PORT); 
+        if (ret < 0) {
+            Logger::getInstance().error("Cannot send delete request");
+        }
+    }
+    clients.clear();
+}
 
 } // namespace vpn

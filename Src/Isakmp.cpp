@@ -334,9 +334,8 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
 
 IsakmpHeader Isakmp::prepare_header_for_delete_req() const {
     IsakmpHeader head;
-    // initiator spi
+    // SPI
     head.init_spi = this -> source_spi;
-    // responder spi must be 0 for msg1
     head.resp_spi = this -> dest_spi;
     // first payload - delete (12)
     head.next_payload = 12;
@@ -360,13 +359,13 @@ IsakmpDeleteReq Isakmp::prepare_delete_req() const {
     req.next = 0;
     req.reserved = 0;
     // len of payload
-    req.len = htons(sizeof(req) - sizeof(req.len));
+    req.len = htons(sizeof(req) - sizeof(req.head));
     // DOI = 0 for ISAKMP
     req.doi = 0;
-    // IPSec
+    // ISAKMP
     req.proto_id = 1;
-    // SPI size = 4 octets
-    req.spi_size = 4;
+    // SPI size = 8 octets
+    req.spi_size = 8;
     // 1 spi only
     req.of_spi = htons(1);
     // our spi to delete
@@ -376,7 +375,7 @@ IsakmpDeleteReq Isakmp::prepare_delete_req() const {
 
 
 IsakmpStatus Isakmp::verify_delete_request() {
-
+    return IsakmpStatus::SUCCESS;
 }
 
 std::uint64_t Isakmp::get_spi() const {
@@ -389,11 +388,10 @@ void Isakmp::prepare_key(std::uint8_t key[128], std::string const& key_hex) cons
 }
 
 std::uint64_t Isakmp::get_next_spi(bool set) {
-    Isakmp::next_spi++;
     if (set) {
-        this -> source_spi = Isakmp::next_spi - 1;
+        this -> source_spi = Isakmp::next_spi;
     }
-    return Isakmp::next_spi - 1;
+    return Isakmp::next_spi++;
 }
 
 } // namespace vpn

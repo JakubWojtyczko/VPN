@@ -4,6 +4,7 @@
 #include "IsakmpHeader.h"
 #include "Buffer.h"
 #include "Utils.h"
+#include "SocketInc.h"
 
 #include <cstdlib>
 
@@ -26,7 +27,7 @@ bool ClientIsakmp::connect_to_server() {
         cli_sock.close_socket();
         return false;
     }
-    Logger::getInstance().info("ClientIsakmp - handshake end");
+    user_message("Connected to the server");
     return true;
 }
 
@@ -87,8 +88,22 @@ std::thread ClientIsakmp::start() {
 }
 
 void ClientIsakmp::listen() {
+    std::string p_addr;
+    int port, len;
+    unsigned char buffer[1501];
     while (is_active) {
-        // listen
+        len = cli_sock.recv_from(buffer, 1500, MSG_DONTWAIT, p_addr, port);
+        if (len < 0) {    
+            // zero data received 
+            continue;
+        } else {
+            if (buffer[16] == 12) {
+                // delete request
+                cli_sock.close_socket();
+                user_message("** Halted by server **");
+                exit(0);
+            }
+        }
     }
 }
 

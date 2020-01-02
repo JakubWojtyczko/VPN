@@ -30,6 +30,7 @@ int main(int argc, char * argv[]) {
 
     while (halt == false);
 
+    isakmp.disconnect_all_users();
     isakmp.shut_down();
     isakmp.close_server();
     isakmp_thread.join();

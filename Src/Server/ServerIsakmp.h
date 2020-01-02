@@ -25,7 +25,7 @@ public:
     std::thread start();
     void shut_down();
     void close_server();
-
+    void disconnect_all_users();
 
 protected:
 
@@ -38,6 +38,7 @@ protected:
 
     int is_client_added(std::string const& ip) const;
     int find_by_spi(std::uint64_t spi) const;
+
 private:
     Usr & self;
     std::vector<vpn::Usr> & clients;
