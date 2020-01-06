@@ -65,7 +65,7 @@ void Isakmp::prepare_security_context(Message1_2 & msg) const {
     msg.key.next = 5; // Identification
     msg.key.reserved = 0;
     msg.key.length = Socket::htns(sizeof(msg.key));
-    prepare_key(msg.key.data, our_public_key_hex);
+    prepare_key(msg.key.data);
 
     // Identification
     msg.id.next = 0; // None
@@ -92,7 +92,7 @@ IsakmpHeader Isakmp::prepare_header_for_message1() const {
     // no flags for msg1
     head.flags = 0;
     // Message ID = 0
-    head.message_id = Socket::htnl(0);
+    head.message_id = htonl(this -> mess_id);
     head.length = Socket::htnl(sizeof(Message1_2));
     return head;
 }
@@ -175,6 +175,8 @@ IsakmpStatus Isakmp::verify_message_1(Message1_2 const& msg) {
     } else {
         certificate_expiration = CertificateMaxDuration;
     }
+    // get public key
+    this -> receive_piblic_key(msg.key.data);
 
     return IsakmpStatus::SUCCESS;
 }
@@ -329,6 +331,9 @@ IsakmpStatus Isakmp::verify_message_2(Message1_2 const& msg) {
     certificate_expiration = ntohl(msg.sec_assoc.proposal.tran.lif_du.value);
     Logger::getInstance().info("TSAKMP: msg2 - life duration: " + std::to_string(certificate_expiration));
 
+    // get server public key
+    receive_piblic_key(msg.key.data);
+
     return IsakmpStatus::SUCCESS;
 }
 
@@ -382,9 +387,17 @@ std::uint64_t Isakmp::get_spi() const {
     return dest_spi;
 }
 
+void Isakmp::receive_piblic_key(std::uint8_t const data[128]) {
+    for (unsigned i=0; i<128; ++i) {
+        this -> rec_public_key_hex[i] = data[i];
+    }
+}
 
-void Isakmp::prepare_key(std::uint8_t key[128], std::string const& key_hex) const {
 
+void Isakmp::prepare_key(std::uint8_t key[128]) const {
+    for (unsigned i=0; i<128; ++i) {
+        key[i] = our_public_key_hex[i];
+    }
 }
 
 std::uint64_t Isakmp::get_next_spi(bool set) {

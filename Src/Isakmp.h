@@ -71,11 +71,11 @@ public:
     const static int PORT;
 
 protected:
-    void prepare_key(std::uint8_t key[128], std::string const& key_hex) const;
-    
+    void prepare_key(std::uint8_t key[128]) const;
+    void receive_piblic_key(std::uint8_t const data[128]);
 private:
-    std::string our_public_key_hex;
-    std::string rec_public_key_hex;
+    std::uint8_t our_public_key_hex[128];
+    std::uint8_t rec_public_key_hex[128];
 
     std::string our_private_key_hex;
     // our secret value for decoding/encoding messages over IPSec
