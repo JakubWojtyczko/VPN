@@ -12,7 +12,7 @@ namespace vpn  {
 class Ssl {
 
 public:
-    Ssl(size_t key_len) :priv_key(nullptr), pub_key(nullptr), key_len(key_len), 
+    Ssl() : priv_key(nullptr), pub_key(nullptr), 
         secret(nullptr),  secret_size(0), other_public(nullptr) {}
     virtual ~Ssl();
 
@@ -34,7 +34,7 @@ private:
 
     DH * priv_key;
     BIGNUM * pub_key;
-    const size_t key_len;
+    static const size_t key_len = 1024;
     unsigned char * secret;
     int secret_size;
 

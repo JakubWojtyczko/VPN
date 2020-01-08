@@ -66,8 +66,9 @@ public:
     IsakmpDeleteReq prepare_delete_req() const;
     IsakmpStatus verify_delete_request();
 
-    std::uint64_t get_spi() const;
+    std::uint64_t get_spi(bool dest=false) const;
     std::uint64_t get_next_spi(bool set=false);
+    void set_spi(std::uint64_t spi);
     const static int PORT;
 
 protected:

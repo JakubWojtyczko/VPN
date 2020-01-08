@@ -383,8 +383,8 @@ IsakmpStatus Isakmp::verify_delete_request() {
     return IsakmpStatus::SUCCESS;
 }
 
-std::uint64_t Isakmp::get_spi() const {
-    return dest_spi;
+std::uint64_t Isakmp::get_spi(bool dest) const {
+    return (dest ? dest_spi : source_spi);
 }
 
 void Isakmp::receive_piblic_key(std::uint8_t const data[128]) {

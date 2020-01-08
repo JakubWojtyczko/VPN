@@ -118,7 +118,7 @@ void ServerIsakmp::handle_exist(std::string const& ip, char * buf, int len) {
 
 int ServerIsakmp::find_by_spi(std::uint64_t spi) const {
     for (int i=0; i<(int)clients.size(); ++i) {
-        if (clients[i].get_isakmp().get_spi() == spi) {
+        if (clients[i].get_isakmp().get_spi(true) == spi) {
             return i;
         }
     }
