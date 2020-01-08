@@ -33,7 +33,9 @@ Queue & Usr::get_to_tap_queue() {
     return this -> to_tap;
 }
 
-
+bool Usr::prepare_ssl() {
+    return this -> ssl.init();
+}
 
 } // namespace vpn
 

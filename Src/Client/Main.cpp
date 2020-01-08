@@ -14,6 +14,12 @@ int main() {
     // Note - method below can exit the program
     vpn::Config::read_config_file();
     vpn::Usr self(vpn::Config::get_instance()["client_ip"]);
+
+    // prepare SSL parameters to exchange
+    if (self.prepare_ssl() == false) {
+        vpn::exit_with_error("Cannot prepare SSL parameters");
+    }
+
     vpn::ClientIsakmp isakmp(self);
 
     if (isakmp.connect_to_server() == false) {

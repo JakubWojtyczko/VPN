@@ -1,9 +1,13 @@
 #include "SSL.h"
 #include "Logger.h"
+#include "Utils.h"
+#include "Config.h"
 
 #include <openssl/evp.h>
 #include <openssl/sha.h>
+#include <openssl/ssl.h>
 
+#include <stdio.h>
 
 
 namespace vpn {
@@ -24,15 +28,21 @@ Ssl::~Ssl() {
 }
 
 bool Ssl::init() {
-    if ((priv_key = DH_new()) == NULL) {
-            Logger::getInstance().error("DH_get_1024_160: cannot create");
-            return false;
-    }
-    int codes;
-    if ((DH_generate_parameters_ex(priv_key, 2024, DH_GENERATOR_2, NULL) != 1)) {
-        Logger::getInstance().error("DH: cannot genereate key parameters");
+
+    // read DH parameters from file
+    FILE * dhparams_file = fopen(Config::get_instance()["dh_pem"].c_str(), "r");
+    if (dhparams_file == nullptr) {
+        user_message(Config::get_instance()["dh_pem"] + " is missing.");
         return false;
     }
+
+    if ((priv_key = PEM_read_DHparams(dhparams_file, nullptr, nullptr, nullptr)) == nullptr) {
+        Logger::getInstance().error("DH: cannot read DH parameters");
+        fclose(dhparams_file);
+        return false;
+    }
+    fclose(dhparams_file);
+    int codes;
     if(DH_check(priv_key, &codes) != 1) {
         Logger::getInstance().error("DH: chacking failed");
         return false;

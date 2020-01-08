@@ -3,6 +3,7 @@
 
 #include "Isakmp.h"
 #include "Queue.h"
+#include "SSL.h"
 
 #include <string>
 
@@ -23,7 +24,8 @@ public:
     Usr(std::string const& ip, std::uint64_t spi=0) : 
         state(UserConnectionState::DISCONNECTED),
         ip(ip),
-        isakmp(ip, spi) {}
+        isakmp(ip, spi),
+        ssl(1024) {}
     virtual ~Usr() {}
 
     void update_state(UserConnectionState new_state);
@@ -35,11 +37,14 @@ public:
     Queue & get_from_tap_queue();
     Queue & get_to_tap_queue();
 
+    bool prepare_ssl();
+
 private:
     UserConnectionState state;
     std::string ip;
     Isakmp isakmp;
     Queue from_phy, to_tap, from_tap, to_phy;
+    Ssl ssl;
 };
 
 } // namespace vpn
