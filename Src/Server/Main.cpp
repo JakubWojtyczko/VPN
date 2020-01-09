@@ -51,7 +51,7 @@ int main(int argc, char * argv[]) {
     isakmp.close_server();
     isakmp_thread.join();
 
-    // delete the tun interface
+    // delete the tun interface and restore net settings
     tun.delete_if();
 
     vpn::user_message("Server shut down successfully");

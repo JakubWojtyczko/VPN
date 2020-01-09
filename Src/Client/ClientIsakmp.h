@@ -21,7 +21,7 @@ class ClientIsakmp {
 public:
     ClientIsakmp(Usr & user) : 
         user(user), 
-        cli_sock(Config::get_instance()["client_ip"], Isakmp::PORT, SockTransport::UDP),
+        cli_sock("0.0.0.0", Isakmp::PORT, SockTransport::UDP),
         is_active(true)
         {}
     virtual ~ClientIsakmp() {}

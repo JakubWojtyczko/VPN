@@ -2,6 +2,8 @@
 #include "ClientIsakmp.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Tun.h"
+
 
 #include <csignal>
 #include <iostream>
@@ -13,7 +15,7 @@ int main() {
     // Read config from file
     // Note - method below can exit the program
     vpn::Config::read_config_file();
-    vpn::Usr self(vpn::Config::get_instance()["client_ip"]);
+    vpn::Usr self("0.0.0.0");
 
     // prepare SSL parameters to exchange
     if (self.prepare_ssl() == false) {
@@ -36,10 +38,19 @@ int main() {
         }
     );
 
+    vpn::Tun tun;
+    if (!tun.alloc(vpn::Config::get_instance()["tun_name"])) {
+        halt = true;
+    }
+    if (!tun.set_up()) {
+        halt = true;
+    }
+
     while(halt == false);
 
     isakmp.close();
     isakmp_thread.join();
+    tun.delete_if();
     vpn::user_message("Disconnected successfully");
     return 0;
 }
