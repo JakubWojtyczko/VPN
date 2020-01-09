@@ -1,5 +1,6 @@
 #include "Usr.h"
 #include "ServerIsakmp.h"
+#include "Defines.h"
 #include "Threads.h"
 #include "Config.h"
 #include "Utils.h"
@@ -16,8 +17,8 @@ int main(int argc, char * argv[]) {
     // Read config from file
     // Note - method below can exit the program
     vpn::Config::read_config_file();
-    std::string ip = vpn::Config::get_instance()["server_ip"];
-    vpn::Usr self(ip);
+    
+    vpn::Usr self(VPN_ANY_ADDRESS);
     // generate SPI for server
     self.get_isakmp().get_next_spi(true);
     std::vector<vpn::Usr> clients;
@@ -25,6 +26,7 @@ int main(int argc, char * argv[]) {
 
     // run ISAKMP in the background
     std::thread isakmp_thread = isakmp.start();
+    std::string ip = vpn::Config::get_instance()["server_ip"];
     vpn::user_message("Server is running [IP=" + ip + "]\n");
 
     // create and allocate the tun interface

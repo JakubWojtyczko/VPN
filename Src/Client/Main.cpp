@@ -1,5 +1,6 @@
 #include "Usr.h"
 #include "ClientIsakmp.h"
+#include "Defines.h"
 #include "Config.h"
 #include "Utils.h"
 #include "Tun.h"
@@ -15,7 +16,7 @@ int main() {
     // Read config from file
     // Note - method below can exit the program
     vpn::Config::read_config_file();
-    vpn::Usr self("0.0.0.0");
+    vpn::Usr self(VPN_ANY_ADDRESS);
 
     // prepare SSL parameters to exchange
     if (self.prepare_ssl() == false) {

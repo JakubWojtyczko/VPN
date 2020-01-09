@@ -3,6 +3,7 @@
 
 #include "Usr.h"
 #include "Config.h"
+#include "Defines.h"
 #include "Socket.h"
 #include "Isakmp.h"
 #include "Threads.h"
@@ -21,7 +22,7 @@ class ClientIsakmp {
 public:
     ClientIsakmp(Usr & user) : 
         user(user), 
-        cli_sock("0.0.0.0", Isakmp::PORT, SockTransport::UDP),
+        cli_sock(VPN_ANY_ADDRESS, Isakmp::PORT, SockTransport::UDP),
         is_active(true)
         {}
     virtual ~ClientIsakmp() {}

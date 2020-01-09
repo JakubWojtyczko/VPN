@@ -6,6 +6,7 @@
 #include "Threads.h"
 #include "Isakmp.h"
 #include "Config.h"
+#include "Defines.h"
 
 
 #include <vector>
@@ -19,7 +20,7 @@ public:
     ServerIsakmp(Usr & self, std::vector<vpn::Usr> & cli) :
         self(self),
         clients(cli),
-        server_sock(Config::get_instance()["server_ip"], Isakmp::PORT, SockTransport::UDP),
+        server_sock(VPN_ANY_ADDRESS, Isakmp::PORT, SockTransport::UDP),
         is_active(true)
         {}
     std::thread start();
