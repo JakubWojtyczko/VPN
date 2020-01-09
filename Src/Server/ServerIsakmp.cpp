@@ -79,12 +79,18 @@ void ServerIsakmp::handle_new(std::string const& ip, char * buf, int len) {
             return;
     }
     clients.push_back(Usr(ip, self.get_isakmp().get_spi()));
-    user_message("New client: " + ip);
+    
     Message1_2 msg1;
     std::memcpy(&msg1, buf, len);
     if (clients.back().get_isakmp().verify_message_1(msg1) != SUCCESS) {
         Logger::getInstance().error("ServerIsakmp: msg1 verification failed");
+        clients.erase(clients.end() - 1);
         return; // TODO respnse with failed code !
+    }
+    // prepare SSL parameters for new client
+    if (clients.back().prepare_ssl() == false) {
+        Logger::getInstance().error("IsakmpServer: Error with SSL parameters.");
+        return;
     }
     // send message 2
     Message1_2 msg2 = clients.back().get_isakmp().prepare_message_2();
@@ -92,6 +98,8 @@ void ServerIsakmp::handle_new(std::string const& ip, char * buf, int len) {
     unsigned char buffer[msg2_size];
     memcpy(buffer, &msg2, msg2_size);
     server_sock.send_to(buffer, msg2_size, 0, ip.c_str(), Isakmp::PORT);
+
+    user_message("New client: " + ip);
 }
 
 void ServerIsakmp::handle_exist(std::string const& ip, char * buf, int len) {

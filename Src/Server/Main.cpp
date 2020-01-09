@@ -15,7 +15,8 @@ int main(int argc, char * argv[]) {
     // Read config from file
     // Note - method below can exit the program
     vpn::Config::read_config_file();
-    vpn::Usr self(vpn::Config::get_instance()["server_ip"]);
+    std::string ip = vpn::Config::get_instance()["server_ip"];
+    vpn::Usr self(ip);
     // generate SPI for server
     self.get_isakmp().get_next_spi(true);
     std::vector<vpn::Usr> clients;
@@ -23,7 +24,7 @@ int main(int argc, char * argv[]) {
 
     // run ISAKMP in the background
     std::thread isakmp_thread = isakmp.start();
-    vpn::user_message("Server is running.");
+    vpn::user_message("Server is running.[ " + ip + "]\n");
 
     // Handle Ctrl+C event
     std::signal(SIGINT, 

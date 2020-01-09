@@ -6,6 +6,8 @@
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 #include <openssl/ssl.h>
+#include <openssl/dh.h>
+#include <openssl/bn.h>
 
 #include <stdio.h>
 
@@ -57,6 +59,9 @@ bool Ssl::init() {
         Logger::getInstance().error("DH: cannot generate a private key");
         return false;
     }
+
+    // Logger::getInstance().buff(get_pub_key_hex()); // show public key hex
+
     return true;
 }
 
@@ -79,15 +84,20 @@ bool Ssl::compute_secret() {
         return false;
     }
     return true;
-}
+} 
 
 Buffer <std::uint8_t> Ssl::get_pub_key_hex() {
-    char buffer[128]; // TODO 
-    if (BN_hex2bn(&pub_key, buffer) == 0) {
-        Logger::getInstance().error("DH: het key hex failed");
+    BIGNUM * pubkey = (BIGNUM *) DH_get0_pub_key(priv_key);
+    if (pubkey == nullptr) {
+        Logger::getInstance().error("DH: DH_get0_pub_key failed");
+    }
+    char buffer[BN_num_bytes(pubkey)];
+    int ret;
+    if ((ret = BN_hex2bn(&pubkey, buffer)) == 0) {
+        Logger::getInstance().error("DH: get key hex failed");
         return Buffer <std::uint8_t> ();
     }
-    return Buffer <std::uint8_t> ((void *)buffer, 128);
+    return Buffer <std::uint8_t> ((void *)buffer, ret);
 }
 
 Buffer <std::uint8_t> Ssl::encode_text(Buffer <std::uint8_t> const&  buffer) const {

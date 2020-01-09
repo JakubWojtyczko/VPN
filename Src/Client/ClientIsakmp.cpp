@@ -12,6 +12,7 @@ namespace vpn {
 
 
 bool ClientIsakmp::connect_to_server() {
+    user_message("Connecting to the server (" + Config::get_instance()["server_ip"] + ")...");
     // create socket, bind address and port
     Logger::getInstance().info("ClientIsakmp - prepare connection");
     if (!prepare_connection_for_isakmp()) {
@@ -26,7 +27,7 @@ bool ClientIsakmp::connect_to_server() {
         cli_sock.close_socket();
         return false;
     }
-    user_message("Connected to the server");
+    user_message("Connected successfully.");
     return true;
 }
 
@@ -53,7 +54,7 @@ bool ClientIsakmp::handshake() {
     Message1_2 msg2;
     std::string p_addr;
     if (cli_sock.recv_from(&msg2, sizeof(msg2), 0, p_addr, port) < 0) {
-        user_message("Response timeoud out. Server unavailable");
+        user_message("Response timed out. Server unavailable");
         return false;
     }
 
