@@ -3,7 +3,9 @@
 #include "Defines.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Secure.h"
 #include "Tun.h"
+#include "Crypto.h"
 
 
 #include <csignal>
@@ -46,9 +48,22 @@ int main() {
     if (!tun.set_up()) {
         halt = true;
     }
+    // Create encrypting tool
+    vpn::Crypto crypto;
+
+    // Create tunnel handling
+    vpn::Secure secure(tun, crypto);
+    if (!secure.set_up()) {
+        halt = true;
+    }
+    std::thread tx = secure.start_tx();
+    std::thread rx = secure.start_rx();
+
 
     while(halt == false);
-
+    secure.stop();
+    tx.join();
+    rx.join();
     isakmp.close();
     isakmp_thread.join();
     tun.delete_if();
