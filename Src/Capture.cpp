@@ -31,9 +31,9 @@ bool Capture::set_up() {
         return false;
     }
     // only ethernet frames are supported
-    if (check_data_link(handle, DLT_EN10MB) == false) {
-        return false;
-    }
+    //if (check_data_link(handle, DLT_EN10MB) == false) {
+    //    return false;
+    //}
     // only IPv4 packets are considered
     if (set_filter("ip") == false) {
         return false;

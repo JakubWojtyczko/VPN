@@ -1,6 +1,7 @@
 #ifndef VPN_SECURE
 #define VPN_SECURE
 
+#include "Capture.h"
 #include "Crypto.h"
 #include "Config.h"
 #include "Defines.h"
@@ -21,7 +22,8 @@ public:
         tun(tun), 
         crypto(crypto),
         is_active(true),
-        sock(VPN_ANY_ADDRESS, stoi(Config::get_instance()["sec_port"]), SockTransport::UDP) {}
+        sock(VPN_ANY_ADDRESS, stoi(Config::get_instance()["sec_port"]), SockTransport::UDP),
+        capture(Config::get_instance()["tun_name"].c_str()) {}
 
 
     virtual ~Secure();
@@ -40,6 +42,7 @@ private:
     Crypto & crypto;
     bool is_active;
     Socket sock;
+    Capture capture;
 };
 
 } // namespace vpn

@@ -61,9 +61,9 @@ int main() {
 
 
     while(halt == false);
+    tx.detach();
+    rx.detach();
     secure.stop();
-    tx.join();
-    rx.join();
     isakmp.close();
     isakmp_thread.join();
     tun.delete_if();
